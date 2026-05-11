@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universidades y Proceso de Admisión - Aureus Academy</title>
+    <link rel="icon" href="../img/Icono_aureus.png">
+
+    <!-- Updated paths to lms-platform/css/ -->
+    <link rel="stylesheet" href="../lms-platform/css/global/main.css">
+    <link rel="stylesheet" href="../lms-platform/css/components/buttons.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        /* Modern aesthetic for the grid of logos */
+        .gril-uni {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 2rem;
+            align-items: center;
+            justify-items: center;
+            margin-top: 3rem;
+        }
+
+        .caja-logo {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 0.75rem;
+            width: 180px;
+            height: 130px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .caja-logo:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 25px rgba(34, 94, 71, 0.15);
+            border-color: var(--green-light);
+        }
+
+        .caja-logo img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            filter: grayscale(10%) contrast(1.1);
+            transition: filter 0.3s ease;
+        }
+
+        .caja-logo:hover img {
+            filter: grayscale(0%) contrast(1.1);
+        }
+
+        /* Calendar modal styles */
+        .mod-cal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(34, 94, 71, 0.6);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .cont-cal {
+            background: white;
+            border-radius: var(--radius-lg);
+            width: 95%;
+            max-width: 1100px;
+            max-height: 95vh;
+            overflow: hidden;
+            position: relative;
+            box-shadow: var(--shadow-heavy);
+        }
+
+        .gril-cal {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background: var(--border-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+
+        .dia-cal {
+            background: white;
+            padding: 1rem;
+            min-height: 100px;
+            font-size: 0.8rem;
+        }
+
+        .dia-cal.header {
+            background: var(--green-dark);
+            color: white;
+            padding: 0.5rem;
+            text-align: center;
+            font-weight: 700;
+            min-height: auto;
+        }
+
+        .etiq-evn {
+            background: var(--green-light);
+            color: var(--green-dark);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            margin-top: 0.5rem;
+            font-weight: 700;
+        }
+
+        /* PDF Viewer Styles */
+        .pdf-container {
+            width: 100%;
+            height: 65vh;
+            background: #f1f5f9;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .pdf-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .pdf-loading {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            z-index: 5;
+        }
+
+        .pas-proc {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid var(--border-color);
+            margin-bottom: 4rem;
+        }
+
+        .item-pas {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .item-pas:last-child {
+            margin-bottom: 0;
+        }
+
+        .num-pas {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--green-light);
+            color: var(--green-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+
+<body class="bg-[#f8f7f2]">
+    <nav class="fixed top-0 inset-x-0 h-20 bg-[var(--green-dark)] text-white flex items-center px-8 z-50 shadow-md">
+        <div class="flex items-center gap-4">
+            <a href="index.html" class="flex items-center gap-3">
+                <img src="../img/logo.png" alt="Aureus Academy Logo"
+                    class="w-12 h-12 rounded-lg shadow-sm border border-white/10">
+                <div class="flex flex-col">
+                    <span class="font-bold text-xl leading-none tracking-tight">Aureus Academy</span>
+                    <span
+                        class="text-[0.65rem] text-[#aabe5c] font-bold tracking-widest uppercase mt-1">Preuniversitario</span>
+                </div>
+            </a>
+        </div>
+        <div class="ml-auto flex gap-8 font-bold text-sm uppercase items-center">
+            <a href="index.html" class="opacity-70 hover:opacity-100 transition-opacity">Inicio</a>
+            <a href="index.html#nosotros" class="opacity-70 hover:opacity-100 transition-opacity">Nosotros</a>
+            <a href="uni.html" class="text-[#aabe5c] underline underline-offset-8 decoration-2">Universidades</a>
+            <a href="simuladores.html" class="opacity-70 hover:opacity-100 transition-opacity">Simuladores</a>
+            <a href="contactanos.html" class="opacity-70 hover:opacity-100 transition-opacity">Contacto</a>
+            <a href="login.html"
+                class="bg-[#aabe5c] text-[var(--green-dark)] px-5 py-2.5 rounded-xl hover:bg-white hover:shadow-lg transition-all transform hover:-translate-y-0.5">Ingresar</a>
+        </div>
+    </nav>
+
+    <main class="pt-32 pb-20 max-w-7xl mx-auto px-6">
+        <div class="text-center mb-12">
+            <h1 class="text-5xl font-extrabold mb-4 text-[#225e47]">Proceso de Admisión Universitario</h1>
+            <p class="text-xl text-slate-500 max-w-3xl mx-auto">Conoce cómo ingresar a las instituciones de educación
+                superior pública del Ecuador y explora sus cronogramas específicos.</p>
+        </div>
+
+        <!-- Explicación General del Proceso -->
+        <section class="pas-proc animate-fade" style="animation-delay: 100ms">
+            <h2 class="text-2xl font-bold text-[#225e47] mb-6 border-b pb-4 border-gray-100">Fases del Proceso de
+                Ingreso en Ecuador</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <div class="item-pas">
+                        <div class="num-pas">1</div>
+                        <div>
+                            <h3 class="font-bold text-[#225e47] text-lg">Registro Nacional Obligatorio</h3>
+                            <p class="text-slate-500 text-sm mt-1">Es el primer paso indispensable liderado por la
+                                SENESCYT. Permite a las instituciones obtener tus datos oficiales para iniciar el
+                                proceso.</p>
+                        </div>
+                    </div>
+                    <div class="item-pas">
+                        <div class="num-pas">2</div>
+                        <div>
+                            <h3 class="font-bold text-[#225e47] text-lg">Inscripción Universitaria</h3>
+                            <p class="text-slate-500 text-sm mt-1">Con el Registro Nacional completo, debes inscribirte
+                                directamente en las plataformas oficiales de cada universidad a la que desees postular.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="item-pas">
+                        <div class="num-pas">3</div>
+                        <div>
+                            <h3 class="font-bold text-[#225e47] text-lg">Evaluación (Examen de Admisión)</h3>
+                            <p class="text-slate-500 text-sm mt-1">Cada universidad pública define de forma autónoma su
+                                mecanismo de evaluación (conocimientos o aptitudes puntuales) y sus fechas.</p>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="item-pas">
+                        <div class="num-pas">4</div>
+                        <div>
+                            <h3 class="font-bold text-[#225e47] text-lg">Postulación</h3>
+                            <p class="text-slate-500 text-sm mt-1">Con tu nota de grado y el puntaje de la evaluación,
+                                eliges las carreras de tu preferencia en el orden de prioridad que consideres.</p>
+                        </div>
+                    </div>
+                    <div class="item-pas">
+                        <div class="num-pas">5</div>
+                        <div>
+                            <h3 class="font-bold text-[#225e47] text-lg">Asignación de Cupos</h3>
+                            <p class="text-slate-500 text-sm mt-1">El sistema universitario asigna los cupos en función
+                                del mérito académico (puntaje más alto) y la disponibilidad por carrera.</p>
+                        </div>
+                    </div>
+                    <div class="item-pas">
+                        <div class="num-pas">6</div>
+                        <div>
+                            <h3 class="font-bold text-[#225e47] text-lg">Aceptación y Matrícula</h3>
+                            <p class="text-slate-500 text-sm mt-1">Si obtienes un cupo, debes aceptarlo formalmente en
+                                el sistema. Posteriormente, procedes a matricularte siguiendo las normas de tu facultad.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Título y Búsqueda Fuera de cualquier recuadro -->
+        <div class="mt-24 mb-10 px-2 animate-fade" style="animation-delay: 200ms">
+            <h2 class="text-3xl md:text-4xl font-black text-[#225e47] mb-2">Las 33 Universidades Públicas</h2>
+            <div class="flex flex-col md:flex-row justify-between items-end gap-4">
+                <p class="text-slate-500 font-medium">Haz clic en el logo para conocer cronogramas y detalles oficiales.
+                </p>
+                <div class="relative w-full md:w-80">
+                    <input type="text" id="search-uni" placeholder="Buscar universidad..."
+                        class="w-full bg-white border-2 border-slate-200 rounded-2xl px-12 py-3.5 text-sm font-bold text-slate-700 focus:border-[#568c75] focus:ring-4 focus:ring-[#568c75]/20 transition-all outline-none shadow-sm placeholder:font-normal">
+                    <i data-lucide="search" class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de Razonamiento -->
+        <div id="section-razonamiento" class="animate-fade" style="animation-delay: 300ms">
+            <div class="flex items-center gap-4 mb-8">
+                <div
+                    class="w-12 h-12 bg-amber-500/10 text-amber-600 rounded-2xl flex items-center justify-center shadow-sm">
+                    <i data-lucide="brain" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-black text-[#225e47] uppercase tracking-tight">Evaluación por Razonamiento
+                    </h3>
+                    <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">Aptitudes, Lógica y
+                        Razonamiento Verbal/Numérico</p>
+                </div>
+                <div class="h-[2px] flex-1 bg-gradient-to-r from-amber-500/20 to-transparent ml-4"></div>
+            </div>
+            <div class="gril-uni mb-20" id="gril-razonamiento">
+                <!-- Contenido dinámico -->
+            </div>
+        </div>
+
+        <!-- Sección de Conocimiento -->
+        <div id="section-conocimiento" class="animate-fade" style="animation-delay: 400ms">
+            <div class="flex items-center gap-4 mb-8">
+                <div
+                    class="w-12 h-12 bg-blue-500/10 text-blue-600 rounded-2xl flex items-center justify-center shadow-sm">
+                    <i data-lucide="book-open" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-black text-[#225e47] uppercase tracking-tight">Evaluación por Conocimiento
+                    </h3>
+                    <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">Materias Específicas (Física,
+                        Química, Matemáticas, etc.)</p>
+                </div>
+                <div class="h-[2px] flex-1 bg-gradient-to-r from-blue-500/20 to-transparent ml-4"></div>
+            </div>
+            <div class="gril-uni" id="gril-conocimiento">
+                <!-- Contenido dinámico -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal de Calendario -->
+    <div id="mod-cal-id" class="mod-cal" onclick="closeCalendar(event)">
+        <div class="cont-cal p-8" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h2 id="tit-mod-uni" class="text-3xl font-black text-[#225e47] fira-sans">Cargando...</h2>
+                    <p class="text-[#568c75] font-bold">Cronograma referencial de admisión</p>
+                </div>
+                <button onclick="document.getElementById('mod-cal-id').style.display='none'"
+                    class="p-2 hover:bg-slate-100 rounded-full">
+                    <i data-lucide="x" class="w-8 h-8 text-[#225e47]"></i>
+                </button>
+            </div>
+
+            <div class="pdf-container">
+                <div id="pdf-loader" class="pdf-loading">
+                    <div class="flex flex-col items-center gap-4">
+                        <div class="w-12 h-12 border-4 border-[#aabe5c] border-t-transparent rounded-full animate-spin">
+                        </div>
+                        <p class="text-sm font-bold text-[#225e47]">Cargando documento...</p>
+                    </div>
+                </div>
+                <!-- El ID del iframe permitirá inyectar el PDF -->
+                <iframe id="pdf-frame" src=""
+                    onload="document.getElementById('pdf-loader').style.display='none'"></iframe>
+
+                <!-- Mensaje de Próximamente -->
+                <div id="pdf-not-available"
+                    class="hidden h-full w-full flex items-center justify-center p-8 animate-fade bg-white">
+                    <img src="../img/trabajando.png" alt="Estamos trabajando para usted"
+                        class="w-full h-full object-contain" style="mix-blend-mode: multiply;">
+                </div>
+            </div>
+
+            <div class="mt-8 p-6 bg-[#225e47]/5 rounded-2xl border border-[#225e47]/10">
+                <h3 class="text-sm font-black uppercase tracking-widest text-[#225e47] mb-2">Detalles Específicos de la
+                    Institución</h3>
+                <p id="desc-mod-uni" class="text-sm">Aquí se mostrará un detalle específico para la universidad
+                    seleccionada.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // =========================================================================
+        // LAS 38 UNIVERSIDADES CATEGORIZADAS
+        // =========================================================================
+        const universities = [
+            { id: '1', name: 'UCE', fullName: 'Universidad Central del Ecuador', logo: '../Univer/UCE-logo.png', pdf: '../oferta academica/UCE.pdf', type: 'razonamiento' },
+            { id: '5', name: 'UG', fullName: 'Universidad de Guayaquil', logo: '../Univer/Ug-logo.png', pdf: '../oferta academica/UG.pdf', type: 'razonamiento' },
+            { id: '16', name: 'UNACH', fullName: 'Universidad Nacional de Chimborazo', logo: '../Univer/Unach-logo.png', pdf: '../oferta academica/unach.pdf', type: 'razonamiento' },
+            { id: '22', name: 'IKIAM', fullName: 'Univ. Regional Amazónica Ikiam', logo: '../Univer/Ikiam-logo.png', pdf: '../oferta academica/ikiam.pdf', type: 'razonamiento' },
+            { id: '24', name: 'UNESUM', fullName: 'Univ. Estatal del Sur de Manabí', logo: '../Univer/Uneum-logo.png', pdf: '../oferta academica/unesum.pdf', type: 'razonamiento' },
+            { id: '27', name: 'UTB', fullName: 'Universidad Técnica de Babahoyo', logo: '../Univer/Utb-logo.png', pdf: '../oferta academica/utb.pdf', type: 'razonamiento' },
+            { id: '26', name: 'UAE', fullName: 'Universidad Agraria del Ecuador', logo: '../Univer/Uae-logo.png', pdf: '../oferta academica/uae.pdf', type: 'razonamiento' },
+            { id: '29', name: 'UTC', fullName: 'Universidad Técnica de Cotopaxi', logo: '../Univer/Utc-logo.png', pdf: '../oferta academica/utc.pdf', type: 'razonamiento' },
+            { id: '30', name: 'UPEC', fullName: 'Politécnica Estatal del Carchi', logo: '../Univer/Upec-logo.png', pdf: '../oferta academica/upec.pdf', type: 'razonamiento' },
+            { id: '31', name: 'UTELVT', fullName: 'Universidad Técnica Luis Vargas Torres', logo: '../Univer/UTELVT-logo.png', pdf: '../oferta academica/utlvte.pdf', type: 'razonamiento' },
+            { id: '20', name: 'UTMACH', fullName: 'Universidad Técnica de Machala', logo: '../Univer/Utmach-logo.png', pdf: '../oferta academica/utmact.pdf', type: 'razonamiento' },
+            { id: '8', name: 'UNEMI', fullName: 'Universidad Estatal de Milagro', logo: '../Univer/Unemi-logo.png', pdf: '../oferta academica/UNEMI.pdf', type: 'razonamiento' },
+            { id: '23', name: 'UTM', fullName: 'Universidad Técnica de Manabí', logo: '../Univer/UTM-logo.png', pdf: '../oferta academica/utm.pdf', type: 'razonamiento' },
+            { id: '9', name: 'YACHAY', fullName: 'Yachay Tech', logo: '../Univer/Yachay-logo.png', pdf: '../oferta academica/yachay.pdf', type: 'razonamiento' },
+            { id: '12', name: 'UEB', fullName: 'Universidad Estatal de Bolívar', logo: '../Univer/Ueb-logo.png', pdf: '../oferta academica/UEB.pdf', type: 'razonamiento' },
+            { id: '13', name: 'UPSE', fullName: 'Univ. Estatal Península de Sta. Elena', logo: '../Univer/Upse-ogo.png', pdf: '../oferta academica/upse.pdf', type: 'razonamiento' },
+            { id: '15', name: 'ULEAM', fullName: 'Univ. Laica Eloy Alfaro de Manabí', logo: '../Univer/ULEAM-logo.png', pdf: '../oferta academica/uleam.pdf', type: 'razonamiento' },
+            { id: '17', name: 'UNAE', fullName: 'Universidad Nacional de Educación', logo: '../Univer/Unae-logo.png', pdf: '../oferta academica/unae.pdf', type: 'razonamiento' },
+            { id: '10', name: 'UARTES', fullName: 'Universidad de las Artes', logo: '../Univer/Ua-logo.png', pdf: '../oferta academica/UA.pdf', type: 'razonamiento' },
+            { id: '14', name: 'UAW', fullName: 'Universidad Amawtay Wasi', logo: '../Univer/uaw-logo.png', pdf: '../oferta academica/Amawtay Wasi.pdf', type: 'razonamiento' },
+            { id: '11', name: 'UEA', fullName: 'Universidad Estatal Amazónica', logo: '../Univer/Uea-logo.png', pdf: '../oferta academica/UEA.pdf', type: 'razonamiento' },
+            { id: '19', name: 'UTA', fullName: 'Universidad Técnica de Ambato', logo: '../Univer/UTA-logo.png', pdf: '', type: 'razonamiento' },
+            { id: '25', name: 'ESPAM', fullName: 'Escuela Sup. Pol. Agrop. de Manabí', logo: '../Univer/ESPAM MFL-logo.png', pdf: '../oferta academica/espam.pdf', type: 'razonamiento' },
+ 
+            // CONOCIMIENTO
+            { id: '2', name: 'EPN', fullName: 'Escuela Politécnica Nacional', logo: '../Univer/Epn-logo.png', pdf: '', type: 'conocimiento' },
+            { id: '4', name: 'ESPOL', fullName: 'Escuela Sup. Politécnica del Litoral', logo: '../Univer/Espol-logo.png', pdf: '../oferta academica/ESPOL.pdf', type: 'conocimiento' },
+            { id: '6', name: 'ESPOCH', fullName: 'Escuela Sup. Politécnica de Chimborazo', logo: '../Univer/ESPOCH-logo.png', pdf: '../oferta academica/ESPOCH.pdf', type: 'conocimiento' },
+            { id: '7', name: 'ESPE', fullName: 'Universidad de las Fuerzas Armadas', logo: '../Univer/Espe-logo.png', pdf: '../oferta academica/espe.pdf', type: 'conocimiento' },
+            { id: '21', name: 'UTN', fullName: 'Universidad Técnica del Norte', logo: '../Univer/Utn-logo.png', pdf: '../oferta academica/utn.pdf', type: 'conocimiento' },
+            { id: '3', name: 'UCUENCA', fullName: 'Universidad de Cuenca', logo: '../Univer/UCuenca.webp', pdf: '../oferta academica/UCuenca.pdf', type: 'conocimiento' },
+            { id: '18', name: 'UNL', fullName: 'Universidad Nacional de Loja', logo: '../Univer/Unl-logo.png', pdf: '../oferta academica/unl.pdf', type: 'conocimiento' },
+            { id: '28', name: 'UTEQ', fullName: 'Univ. Técnica Estatal de Quevedo', logo: '../Univer/Uteq-logo.png', pdf: '../oferta academica/uteq.pdf', type: 'conocimiento' },
+ 
+            // OTROS
+            { id: '33', name: 'IAEN', fullName: 'Instituto de Altos Estudios Nacionales', logo: '../Univer/IAEN-logo.png', pdf: '../oferta academica/IAEN.pdf', type: 'razonamiento' },
+            { id: '34', name: 'UASB', fullName: 'Universidad Andina Simón Bolívar', logo: '../Univer/Uasb-logo.png', pdf: '../oferta academica/uasb.pdf', type: 'razonamiento' }
+        ];
+
+        function renderUniversities(filter = '') {
+            const gridRazonamiento = document.getElementById('gril-razonamiento');
+            const gridConocimiento = document.getElementById('gril-conocimiento');
+
+            gridRazonamiento.innerHTML = '';
+            gridConocimiento.innerHTML = '';
+
+            const filtered = universities.filter(uni =>
+                uni.name.toLowerCase().includes(filter.toLowerCase()) ||
+                uni.fullName.toLowerCase().includes(filter.toLowerCase())
+            );
+
+            if (filtered.length === 0) {
+                gridRazonamiento.innerHTML = `<div class="col-span-full py-12 text-slate-400 font-bold">No se encontraron universidades con "${filter}"</div>`;
+                return;
+            }
+
+            filtered.forEach(uni => {
+                const card = document.createElement('div');
+                card.className = 'caja-logo';
+                card.title = uni.fullName;
+                card.onclick = () => showCalendar(uni.id);
+
+                const img = document.createElement('img');
+                img.src = uni.logo;
+                img.alt = `Logo de ${uni.name}`;
+
+                card.appendChild(img);
+
+                if (uni.type === 'conocimiento') {
+                    gridConocimiento.appendChild(card);
+                } else {
+                    gridRazonamiento.appendChild(card);
+                }
+            });
+
+            // Ocultar secciones si están vacías tras el filtrado
+            document.getElementById('section-razonamiento').style.display = gridRazonamiento.children.length > 0 ? 'block' : 'none';
+            document.getElementById('section-conocimiento').style.display = gridConocimiento.children.length > 0 ? 'block' : 'none';
+        }
+
+        // Búsqueda en vivo
+        document.getElementById('search-uni').addEventListener('input', (e) => {
+            renderUniversities(e.target.value);
+        });
+
+        // Inicializar
+        renderUniversities();
+
+        // =========================================================================
+        // CAMBIAR LAS FECHAS Y DESCRIPCIONES AQUÍ 
+        // =========================================================================
+        function showCalendar(uniId) {
+            const modal = document.getElementById('mod-cal-id');
+            const title = document.getElementById('tit-mod-uni');
+            const desc = document.getElementById('desc-mod-uni');
+            const frame = document.getElementById('pdf-frame');
+            const loader = document.getElementById('pdf-loader');
+            const notAvailable = document.getElementById('pdf-not-available');
+
+            const uni = universities.find(u => u.id === uniId);
+            modal.style.display = 'flex';
+            title.innerText = uni.fullName + ' - Documentación';
+
+            // Lista de IDs que aún NO tienen PDF en la carpeta
+            const missingPdfs = ['2', '19'];
+
+            if (missingPdfs.includes(uniId)) {
+                loader.style.display = 'none';
+                frame.style.display = 'none';
+                notAvailable.style.display = 'flex';
+                frame.src = "";
+            } else {
+                notAvailable.style.display = 'none';
+                frame.style.display = 'block';
+                loader.style.display = 'flex';
+                frame.src = uni.pdf;
+            }
+
+            switch (uniId) {
+                case '1':
+                    desc.innerText = 'Fechas de registro interno: 15 de febrero. Examen de conocimientos: 10 de marzo.';
+                    break;
+                case '2':
+                    desc.innerText = 'Test de aptitud presencial programado para la primera semana de marzo.';
+                    break;
+                case '4':
+                    desc.innerText = 'La ESPOL realiza su examen de manera híbrida. Fechas estimadas: Finales de febrero.';
+                    break;
+                default:
+                    desc.innerText = 'Consulta la guía oficial adjunta para conocer los requisitos actuales y cronogramas de admisión.';
+                    break;
+            }
+        }
+
+        function closeCalendar(e) {
+            document.getElementById('mod-cal-id').style.display = 'none';
+        }
+    </script>
+    <!-- Footer Dinámico -->
+    <div id="footer-placeholder"></div>
+    <script src="../lms-platform/js/global/footer.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>
