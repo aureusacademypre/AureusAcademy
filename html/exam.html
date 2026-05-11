@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entorno de Examen - Aureus Academy</title>
+    <link rel="icon" href="../img/Icono_aureus.png">
+
+    <link rel="stylesheet" href="../lms-platform/css/global/main.css">
+    <link rel="stylesheet" href="../lms-platform/css/components/buttons.css">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        body {
+            background-color: #f8f7f2;
+            font-family: 'Garet', sans-serif;
+        }
+
+        .fira-sans { font-family: 'Fira Sans', sans-serif; }
+
+        /* Custom Scrollbar for Sidebar */
+        .sidebar-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .sidebar-scroll::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.05);
+        }
+        .sidebar-scroll::-webkit-scrollbar-thumb {
+            background: #aabe5c;
+            border-radius: 10px;
+        }
+
+        /* Option Radio Buttons Custom Style */
+        .option-radio {
+            display: none;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .option-label:hover {
+            border-color: #568c75;
+            background: rgba(86, 140, 117, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .option-radio:checked + .option-label {
+            border-color: #225e47;
+            background: rgba(34, 94, 71, 0.08);
+            box-shadow: 0 4px 6px -1px rgba(34, 94, 71, 0.1);
+        }
+
+        .option-letter {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f1f5f9;
+            color: #64748b;
+            font-weight: 800;
+            border-radius: 8px;
+            margin-right: 1rem;
+            transition: all 0.2s;
+        }
+
+        .option-radio:checked + .option-label .option-letter {
+            background: #225e47;
+            color: #aabe5c;
+        }
+
+        /* Nav Buttons Status */
+        .q-nav-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .q-nav-unanswered {
+            background: white;
+            border-color: #e2e8f0;
+            color: #64748b;
+        }
+        .q-nav-unanswered:hover {
+            border-color: #94a3b8;
+        }
+
+        .q-nav-answered {
+            background: #568c75;
+            color: white;
+            border-color: #568c75;
+            box-shadow: 0 2px 4px rgba(86, 140, 117, 0.3);
+        }
+
+        .q-nav-active {
+            border-color: #225e47;
+            background: rgba(34, 94, 71, 0.1);
+            color: #225e47;
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(34, 94, 71, 0.2);
+        }
+    </style>
+</head>
+<body class="h-screen w-screen overflow-hidden flex flex-col">
+
+    <!-- Navbar -->
+    <header class="h-20 bg-[#225e47] text-white flex items-center justify-between px-6 z-50 shadow-md shrink-0">
+        <div class="flex items-center gap-4">
+            <img src="../img/logo.png" alt="Aureus Academy Logo" class="w-12 h-12 rounded-lg bg-white/10 p-1">
+            <div class="flex flex-col hidden sm:flex">
+                <span class="font-bold text-lg leading-none tracking-tight" id="header-title">Simulador de Admisión</span>
+                <span class="text-[0.65rem] text-[#aabe5c] font-black tracking-widest uppercase mt-1" id="header-subtitle">Universidad</span>
+            </div>
+        </div>
+
+        <!-- Timer -->
+        <div class="flex items-center gap-3 bg-[#1a4a38] px-5 py-2.5 rounded-2xl border border-white/10 shadow-inner">
+            <i data-lucide="timer" class="w-5 h-5 text-[#aabe5c]"></i>
+            <span id="exam-timer" class="font-black text-xl tracking-wider fira-sans text-white">60:00</span>
+        </div>
+
+        <button onclick="confirmFinish()" class="bg-[#aabe5c] text-[#225e47] font-bold px-6 py-2.5 rounded-xl hover:bg-white hover:shadow-lg transition-all transform hover:-translate-y-0.5 text-sm uppercase tracking-wide">
+            Finalizar
+        </button>
+    </header>
+
+    <!-- Main Content -->
+    <div class="flex flex-1 overflow-hidden">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="w-80 bg-white border-r border-[#225e47]/10 flex flex-col shrink-0">
+            <div class="p-6 border-b border-[#225e47]/10 bg-[#f8fcf9]">
+                <h3 class="font-black text-[#225e47] text-lg mb-1 fira-sans">Navegación</h3>
+                <p class="text-xs text-[#568c75] font-medium">Preguntas del examen</p>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto sidebar-scroll p-6">
+                <!-- Info Badges -->
+                <div class="flex flex-wrap gap-3 mb-6 justify-center text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                    <div class="flex items-center gap-1.5"><div class="w-2.5 h-2.5 rounded-sm bg-white border border-slate-300"></div> Sin Responder</div>
+                    <div class="flex items-center gap-1.5"><div class="w-2.5 h-2.5 rounded-sm bg-[#568c75]"></div> Respondida</div>
+                    <div class="flex items-center gap-1.5"><div class="w-2.5 h-2.5 rounded-sm border-2 border-[#225e47] bg-[#225e47]/10"></div> Actual</div>
+                </div>
+
+                <div id="question-navigator" class="space-y-6">
+                    <!-- Nav buttons will be generated by JS -->
+                </div>
+            </div>
+        </aside>
+
+        <!-- Question Area -->
+        <main class="flex-1 overflow-y-auto bg-[#f8f7f2] relative flex flex-col">
+            <div class="max-w-4xl w-full mx-auto p-8 lg:p-12 flex-1 flex flex-col">
+                
+                <!-- Progress Line -->
+                <div class="w-full bg-slate-200 rounded-full h-1.5 mb-8">
+                    <div id="progress-bar" class="bg-gradient-to-r from-[#568c75] to-[#aabe5c] h-1.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+
+                <div class="bg-white rounded-[2rem] shadow-sm border border-slate-100 p-8 md:p-10 mb-6 flex-1 flex flex-col">
+                    <div class="flex justify-between items-center mb-6">
+                        <span class="bg-[#225e47]/10 text-[#225e47] text-xs font-black uppercase tracking-widest px-4 py-1.5 rounded-full" id="question-category">
+                            Cargando...
+                        </span>
+                        <span class="text-[#568c75] font-black text-sm" id="question-counter">Preparando simulador...</span>
+                    </div>
+
+                    <!-- Layout for Question Text / Image etc -->
+                    <div class="text-xl md:text-2xl text-[#1e293b] font-medium leading-relaxed mb-8 flex-1" id="question-text">
+                        Conectando con la base de datos...
+                    </div>
+
+                    <!-- Options -->
+                    <div class="space-y-3" id="options-container">
+                        <!-- Options generated by JS -->
+                    </div>
+                </div>
+
+                <!-- Footer Navigation Controls -->
+                <div class="flex justify-between items-center mt-auto pt-4">
+                    <button onclick="prevQuestion()" id="btn-prev" class="hidden px-6 py-3 rounded-xl font-bold bg-white text-[#568c75] border-2 border-[#568c75]/20 hover:border-[#568c75] hover:bg-[#568c75]/5 transition-colors items-center gap-2">
+                        <i data-lucide="arrow-left" class="w-5 h-5"></i> Anterior
+                    </button>
+                    
+                    <button onclick="nextQuestion()" id="btn-next" class="hidden px-8 py-3 rounded-xl font-black bg-[#225e47] text-white shadow-soft hover:bg-[#1a4a38] transition-all items-center gap-2 hover:-translate-y-1 ml-auto">
+                        Siguiente <i data-lucide="arrow-right" class="w-5 h-5 text-[#aabe5c]"></i>
+                    </button>
+                    <!-- Small debug info hidden by default -->
+                    <div id="debug-info" class="hidden text-[8px] text-gray-300 absolute bottom-2 right-2">v.2.0</div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Final Results Modal -->
+    <div id="results-modal" class="hidden fixed inset-0 bg-[#225e47]/90 z-[100] flex justify-center items-center backdrop-blur-md p-4">
+        <div class="bg-white rounded-[3rem] w-full max-w-2xl p-10 md:p-14 shadow-2xl text-center relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-[#aabe5c]/20 rounded-full blur-3xl -mr-20 -mt-20"></div>
+            <div class="relative z-10">
+                <div class="w-24 h-24 bg-[#f0fdf4] rounded-full mx-auto flex items-center justify-center mb-6 shadow-inset border border-[#568c75]/20">
+                    <i data-lucide="award" class="w-12 h-12 text-[#568c75]"></i>
+                </div>
+                <h2 class="text-4xl font-black text-[#225e47] fira-sans mb-2">¡Examen Finalizado!</h2>
+                <p class="text-slate-500 font-medium mb-8">Aquí tienes el reporte rápido de tu simulador de prueba.</p>
+                
+                <div class="grid grid-cols-2 gap-6 mb-8">
+                    <div class="bg-[#f8fcf9] p-6 rounded-3xl border border-[#568c75]/10">
+                        <p class="text-xs uppercase font-black tracking-widest text-[#568c75] mb-2">Aciertos</p>
+                        <p class="text-5xl font-black text-[#225e47] fira-sans" id="score-correct">0</p>
+                        <p class="text-sm font-medium text-slate-400 mt-1">de <span id="score-total">0</span> preguntas</p>
+                    </div>
+                    <div class="bg-[#f8fcf9] p-6 rounded-3xl border border-[#568c75]/10 flex flex-col justify-center">
+                        <p class="text-xs uppercase font-black tracking-widest text-[#568c75] mb-2">Puntaje Estimado</p>
+                        <p class="text-4xl font-black text-[#aabe5c] fira-sans" id="score-estimated">0/1000</p>
+                    </div>
+                </div>
+
+                <p class="text-sm text-slate-600 mb-8 border border-slate-100 bg-slate-50 p-4 rounded-xl" id="score-feedback">
+                    Feedback de prueba.
+                </p>
+
+                <div class="flex gap-4 justify-center" id="result-buttons-container">
+                    <!-- Se genera dinámicamente por JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirm-modal" class="hidden fixed inset-0 bg-black/60 z-[100] flex justify-center items-center backdrop-blur-sm p-4">
+        <div class="bg-white rounded-3xl w-full max-w-sm p-8 shadow-2xl text-center">
+            <div class="w-16 h-16 bg-red-50 rounded-full mx-auto flex items-center justify-center mb-4">
+                 <i data-lucide="alert-triangle" class="w-8 h-8 text-red-500"></i>
+            </div>
+            <h3 class="text-2xl font-black text-[#225e47] fira-sans mb-2">¿Seguro que deseas finalizar?</h3>
+            <p class="text-slate-500 text-sm mb-8" id="unanswered-warning">Existen preguntas sin responder.</p>
+            <div class="flex gap-3 justify-center">
+                <button onclick="closeConfirm()" class="flex-1 px-4 py-3 rounded-xl font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors">Cancelar</button>
+                <button onclick="showResults()" class="flex-1 px-4 py-3 rounded-xl font-black bg-[#225e47] text-[#aabe5c] hover:bg-[#1a4a38] transition-colors shadow-sm">Finalizar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logic -->
+    <script>
+        console.log("Simulador iniciado...");
+        lucide.createIcons();
+
+        // Check Query params for university name
+        const urlParams = new URLSearchParams(window.location.search);
+        const uniName = urlParams.get('uni') || 'Examen de Prueba';
+        
+        document.getElementById('header-subtitle').textContent = uniName;
+        document.title = 'Simulador ' + uniName + ' - Aureus Academy';
+        document.getElementById('question-category').textContent = 'Conectando...';
+
+        // Lógica de aleatoriedad
+        function shuffle(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex !== 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        const examProfiles = {
+            'UCE': ['Razonamiento Verbal', 'Razonamiento Numérico', 'Razonamiento Lógico', 'Razonamiento Abstracto'],
+            'ESPOCH': ['Física ESPOCH', 'Química ESPOCH', 'Matemáticas ESPOCH', 'Biología ESPOCH', 'Historia ESPOCH', 'Emprendimiento ESPOCH', 'Ciudadanía ESPOCH', 'Lengua y Literatura ESPOCH'],
+            'ESPOL': ['Física ESPOL', 'Matemáticas ESPOL', 'Química ESPOL'],
+            'EPN': ['Física', 'Matemáticas', 'Química'],
+            'ESPE': ['Álgebra ESPE', 'Geometría ESPE', 'Matemática Básica ESPE', 'Química ESPE', 'Física ESPE'],
+            'UG': ['Razonamiento Numérico', 'Razonamiento Verbal', 'Razonamiento Lógico', 'Lenguaje o Comunicación'],
+            'UCUENCA': ['Matemáticas', 'Física', 'Química', 'Biología', 'Anatomía'],
+            'UNL': ['Biología', 'Química', 'Anatomía', 'Matemáticas', 'Física'],
+            'SALUD': ['Biología', 'Química', 'Anatomía'],
+            'INGENIERIA': ['Matemáticas', 'Física', 'Química'],
+            'SOCIALES': ['Ciencias Sociales', 'Lenguaje o Comunicación'],
+            'DEFAULT': ['Razonamiento Verbal', 'Razonamiento Numérico', 'Razonamiento Lógico']
+        };
+
+        const uniProfileMap = {
+            'UCE': 'UCE',
+            'Universidad Central del Ecuador': 'UCE',
+            'ESPOCH': 'ESPOCH',
+            'Escuela Sup. Politécnica de Chimborazo': 'ESPOCH',
+            'ESPOL': 'ESPOL',
+            'Escuela Sup. Politécnica del Litoral': 'ESPOL',
+            'EPN': 'EPN',
+            'Escuela Politécnica Nacional': 'EPN',
+            'UG': 'UG',
+            'Universidad de Guayaquil': 'UG',
+            'ESPAM': 'UCE',
+            'Escuela Sup. Pol. Agrop. de Manabí': 'UCE',
+            'ESPE': 'ESPE',
+            'Universidad de las Fuerzas Armadas': 'ESPE',
+            'UCUENCA': 'UCUENCA',
+            'Universidad de Cuenca': 'UCUENCA',
+            'UNL': 'UNL',
+            'Universidad Nacional de Loja': 'UNL',
+            'UTN': 'INGENIERIA',
+            'Universidad Técnica del Norte': 'INGENIERIA',
+            'UTEQ': 'INGENIERIA',
+            'Universidad Técnica Estatal de Quevedo': 'INGENIERIA'
+        };
+
+        let questionsDB = [];
+        let currentQuestionIndex = 0;
+        let answers = [];
+        let timeLeft = 0;
+        let timerInterval;
+
+        // INLINE SUPABASE CLIENT
+        const supabaseUrl = 'https://ajbriylkkfullbcipxii.supabase.co';
+        const supabaseKey = 'sb_publishable_YPkUzbD2dq0DWbQQG0qvJA_04f5-xOY';
+        let supabaseInstance; // RENOMBRADO PARA EVITAR CONFLICTO CON window.supabase
+
+        // ARRANCAR EL CRONOMETRO INDEPENDIENTEMENTE
+        function preStartTimer() {
+            timeLeft = 60 * 60; // 60 minutos por defecto hasta que carguen las preguntas
+            startTimer();
+        }
+
+        // FETCH DESDE SUPABASE Y ARRANCAR
+        async function loadQuestionsAndStart() {
+            console.log("Iniciando carga de datos...");
+            const statusEl = document.getElementById('question-text');
+            const categoryEl = document.getElementById('question-category');
+            
+            const isDynamic = urlParams.get('dynamic') === 'true';
+            const dynamicId = localStorage.getItem('current_dynamic_sim');
+
+            try {
+                categoryEl.textContent = 'CONECTANDO...';
+                if (!window.supabase || !window.supabase.createClient) throw new Error("Supabase not ready.");
+                if (!supabaseInstance) supabaseInstance = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+                if (isDynamic && dynamicId) {
+                    // --- MODO MATERIA DINÁMICA ---
+                    const { data: sim, error: sErr } = await supabaseInstance
+                        .from('dynamic_questions')
+                        .select('*')
+                        .eq('id', dynamicId)
+                        .single();
+
+                    if (sErr) throw sErr;
+                    
+                    document.getElementById('header-title').textContent = sim.title;
+                    document.getElementById('header-subtitle').textContent = sim.subject;
+                    document.title = sim.title + " - Aureus Academy";
+
+                    // Carga oficial de preguntas por categoría de materia
+                    const { data: questionsData, error: qErr } = await supabaseInstance
+                        .from('preguntas')
+                        .select('*')
+                        .ilike('categoria', `%${sim.subject}%`);
+
+                    if (qErr) throw qErr;
+
+                    if (questionsData && questionsData.length > 0) {
+                        questionsDB = shuffle(questionsData).map(row => ({
+                            category: row.categoria,
+                            text: row.texto_pregunta,
+                            options: row.opciones, 
+                            correct: row.correcta_index,
+                            img: row.imagen_svg
+                        })).slice(0, 20); // Limitamos a 20 por práctica
+                    }
+
+                } else {
+                    // --- MODO ADMISIÓN UNIVERSIDADES (ANTIGUO) ---
+                    let profileKey = uniProfileMap[uniName] || uniProfileMap[Object.keys(uniProfileMap).find(k => k.includes(uniName) || uniName.includes(k))] || (examProfiles[uniName] ? uniName : 'DEFAULT');
+                    if (uniName.includes('Central del Ecuador') || uniName === 'UCE') profileKey = 'UCE';
+                    const allowedCategories = examProfiles[profileKey] || examProfiles['DEFAULT'];
+
+                    const { data, error } = await supabaseInstance
+                        .from('preguntas')
+                        .select('*')
+                        .in('categoria', allowedCategories)
+                        .limit(5000);
+                        
+                    if (error) throw error;
+
+                    const allQuestions = data.map(row => ({
+                        category: row.categoria,
+                        text: row.texto_pregunta,
+                        options: row.opciones, 
+                        correct: row.correcta_index,
+                        img: row.imagen_svg
+                    }));
+
+                    let finalQuestions = [];
+                    
+                    if (profileKey === 'ESPOCH') {
+                        const TOTAL_QUESTIONS = 80;
+                        const basePerSubject = Math.floor(TOTAL_QUESTIONS / allowedCategories.length);
+                        let remainder = TOTAL_QUESTIONS % allowedCategories.length;
+
+                        allowedCategories.forEach(cat => {
+                            let catQuestions = allQuestions.filter(q => q.category === cat);
+                            let amount = basePerSubject;
+                            if (remainder > 0) {
+                                amount++;
+                                remainder--;
+                            }
+                            finalQuestions = finalQuestions.concat(shuffle(catQuestions).slice(0, amount));
+                        });
+                    } else if (profileKey === 'ESPE') {
+                        // REGLA ESPE: 30 Preguntas en total, distribuidas equitativamente (6 por materia)
+                        const TOTAL_QUESTIONS = 30;
+                        const basePerSubject = Math.floor(TOTAL_QUESTIONS / allowedCategories.length);
+                        allowedCategories.forEach(cat => {
+                            let catQuestions = allQuestions.filter(q => q.category === cat);
+                            finalQuestions = finalQuestions.concat(shuffle(catQuestions).slice(0, basePerSubject));
+                        });
+                    } else if (profileKey === 'INGENIERIA' && uniName.includes('UTN')) {
+                        // REGLA UTN: 90 Preguntas en total, distribuidas equitativamente (30 por materia)
+                        const TOTAL_QUESTIONS = 90;
+                        const basePerSubject = Math.floor(TOTAL_QUESTIONS / allowedCategories.length);
+                        allowedCategories.forEach(cat => {
+                            let catQuestions = allQuestions.filter(q => q.category === cat);
+                            finalQuestions = finalQuestions.concat(shuffle(catQuestions).slice(0, basePerSubject));
+                        });
+                    } else {
+                        allowedCategories.forEach(cat => {
+                            let catQuestions = allQuestions.filter(q => q.category === cat);
+                            finalQuestions = finalQuestions.concat(shuffle(catQuestions).slice(0, 25));
+                        });
+                    }
+                    
+                    questionsDB = finalQuestions;
+                }
+
+                if (!questionsDB || questionsDB.length === 0) {
+                    throw new Error("No se pudieron generar preguntas para este simulador.");
+                }
+
+                // Inicializar Estado
+                answers = new Array(questionsDB.length).fill(null);
+                timeLeft = questionsDB.length * 60; 
+                document.getElementById('btn-prev').style.display = 'flex';
+                document.getElementById('btn-next').style.display = 'flex';
+                initExam();
+
+            } catch(e) {
+                console.error("Detalle del error:", e);
+                categoryEl.textContent = 'ERROR';
+                statusEl.innerHTML = `<div class="bg-red-50 border-2 border-red-200 p-6 rounded-2xl text-red-800">
+                    <p class="font-black text-lg mb-2">Error al cargar el simulador de materia</p>
+                    <p class="text-sm opacity-80 mb-4">${e.message}</p>
+                    <button onclick="location.href='index.html'" class="bg-red-600 text-white px-6 py-2 rounded-lg font-bold text-xs uppercase">Volver al Inicio</button>
+                </div>`;
+            }
+        }
+
+        function exitExam() {
+            // Regresar al dashboard a la sección de simuladores
+            window.location.href = 'dashboard.html';
+        }
+
+        // Initialize Exam
+        function initExam() {
+            renderNavigator();
+            showQuestion(0);
+            startTimer();
+        }
+
+        // Render Sidebar Navigator
+        function renderNavigator() {
+            const container = document.getElementById('question-navigator');
+            container.innerHTML = '';
+            
+            let currentCategory = '';
+            let gridDiv = null;
+
+            questionsDB.forEach((q, index) => {
+                if (q.category !== currentCategory) {
+                    currentCategory = q.category;
+                    
+                    const sectionWrapper = document.createElement('div');
+                    
+                    const sectionTitle = document.createElement('div');
+                    sectionTitle.className = 'text-xs font-black uppercase text-[#225e47] border-b border-[#225e47]/10 pb-2 mb-3 tracking-widest';
+                    sectionTitle.textContent = currentCategory.replace(' ESPOL', '').replace(' ESPOCH', '').replace(' ESPE', '');
+                    sectionWrapper.appendChild(sectionTitle);
+                    
+                    gridDiv = document.createElement('div');
+                    gridDiv.className = 'grid grid-cols-4 gap-3';
+                    sectionWrapper.appendChild(gridDiv);
+                    
+                    container.appendChild(sectionWrapper);
+                }
+
+                const btn = document.createElement('button');
+                btn.className = `q-nav-btn ${getNavClass(index)}`;
+                btn.textContent = index + 1;
+                btn.onclick = () => showQuestion(index);
+                btn.id = 'nav-btn-' + index;
+                gridDiv.appendChild(btn);
+            });
+            updateProgressBar();
+        }
+
+        function getNavClass(index) {
+            if (index === currentQuestionIndex) return 'q-nav-active';
+            if (answers[index] !== null) return 'q-nav-answered';
+            return 'q-nav-unanswered';
+        }
+
+        function updateNavigatorUI() {
+            questionsDB.forEach((q, index) => {
+                const btn = document.getElementById('nav-btn-' + index);
+                if(btn) {
+                    btn.className = `q-nav-btn ${getNavClass(index)}`;
+                }
+            });
+            updateProgressBar();
+        }
+
+        function updateProgressBar() {
+            const answeredCount = answers.filter(a => a !== null).length;
+            const percentage = (answeredCount / questionsDB.length) * 100;
+            document.getElementById('progress-bar').style.width = percentage + '%';
+        }
+
+        // Show specific question
+        function showQuestion(index) {
+            if (index < 0 || index >= questionsDB.length) return;
+            currentQuestionIndex = index;
+
+            const q = questionsDB[index];
+            document.getElementById('question-category').textContent = q.category.replace(' ESPOL', '').replace(' ESPOCH', '').replace(' ESPE', '');
+            document.getElementById('question-counter').textContent = `Pregunta ${index + 1} de ${questionsDB.length}`;
+            const qText = document.getElementById('question-text');
+            qText.innerHTML = q.text;
+            if(q.img) {
+                qText.innerHTML += `<div class="mt-8 flex justify-center w-full"><div class="bg-[#f8fcf9] p-6 rounded-2xl shadow-sm border border-[#568c75]/20 inline-block">` + q.img + `</div></div>`;
+            }
+
+            const optionsContainer = document.getElementById('options-container');
+            const letters = ['A', 'B', 'C', 'D'];
+            optionsContainer.innerHTML = q.options.map((opt, i) => {
+                const isVisual = opt.trim().startsWith('<svg') || opt.trim().startsWith('<img');
+                return `
+                    <div class="relative">
+                        <input type="radio" name="q_option" id="opt_${i}" value="${i}" class="option-radio" ${answers[index] === i ? 'checked' : ''} onchange="selectAnswer(${i})">
+                        <label for="opt_${i}" class="option-label ${isVisual ? 'flex-col justify-center text-center p-6' : ''}">
+                            <div class="option-letter shrink-0 ${isVisual ? 'mb-4 mr-0' : ''}">${letters[i]}</div>
+                            <div class="font-bold text-slate-700 w-full flex items-center justify-center min-h-[40px]">
+                                ${isVisual ? `<div class="bg-slate-50 p-4 rounded-xl border border-slate-100 flex justify-center">${opt}</div>` : opt}
+                            </div>
+                        </label>
+                    </div>
+                `;
+            }).join('');
+
+            // Controls
+            document.getElementById('btn-prev').style.visibility = index === 0 ? 'hidden' : 'visible';
+            
+            const nextBtn = document.getElementById('btn-next');
+            if (index === questionsDB.length - 1) {
+                nextBtn.innerHTML = `Terminar Prueba <i data-lucide="check-circle" class="w-5 h-5 text-[#aabe5c]"></i>`;
+                nextBtn.onclick = confirmFinish;
+            } else {
+                nextBtn.innerHTML = `Siguiente <i data-lucide="arrow-right" class="w-5 h-5 text-[#aabe5c]"></i>`;
+                nextBtn.onclick = nextQuestion;
+            }
+            lucide.createIcons();
+            updateNavigatorUI();
+        }
+
+        // Action Functions
+        function selectAnswer(optionIndex) {
+            answers[currentQuestionIndex] = optionIndex;
+            updateNavigatorUI();
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < questionsDB.length - 1) {
+                showQuestion(currentQuestionIndex + 1);
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                showQuestion(currentQuestionIndex - 1);
+            }
+        }
+
+        // Timer Logic
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    showResults(); // Auto finish
+                    return;
+                }
+                timeLeft--;
+                const hours = Math.floor(timeLeft / 3600);
+                const minutes = Math.floor((timeLeft % 3600) / 60);
+                const seconds = timeLeft % 60;
+                
+                if (hours > 0) {
+                    document.getElementById('exam-timer').textContent = `${hours}:${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
+                } else {
+                    document.getElementById('exam-timer').textContent = `${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
+                }
+                
+                // Red color when less than 2 minutos (120 secs)
+                if(timeLeft < 120) {
+                    document.getElementById('exam-timer').classList.add('text-red-400');
+                    document.getElementById('exam-timer').classList.remove('text-white');
+                }
+            }, 1000);
+        }
+
+        // Finalize Logic
+        function confirmFinish() {
+            const unanswered = answers.filter(a => a === null).length;
+            const warningEl = document.getElementById('unanswered-warning');
+            
+            if(unanswered > 0) {
+                warningEl.innerHTML = `Aún tienes <strong>${unanswered} preguntas</strong> sin responder. Al finalizar, se calificarán como incorrectas.`;
+                warningEl.classList.remove('hidden');
+            } else {
+                warningEl.classList.add('hidden');
+            }
+            
+            document.getElementById('confirm-modal').classList.remove('hidden');
+        }
+
+        function closeConfirm() {
+            document.getElementById('confirm-modal').classList.add('hidden');
+        }
+
+        async function showResults() {
+            clearInterval(timerInterval);
+            closeConfirm();
+            
+            const isDynamic = urlParams.get('dynamic') === 'true';
+            const btnContainer = document.getElementById('result-buttons-container');
+
+            // Renderizar botones según el contexto
+            if (isDynamic) {
+                btnContainer.innerHTML = `
+                    <button onclick="exitExam()" class="px-12 py-4 rounded-2xl font-black bg-[#225e47] text-[#aabe5c] hover:bg-[#1a4a38] transition-all shadow-lg uppercase text-xs tracking-widest flex items-center gap-2">
+                        <i data-lucide="arrow-left"></i> Volver al Panel
+                    </button>
+                `;
+            } else {
+                btnContainer.innerHTML = `
+                    <a href="simuladores.html" class="px-8 py-3.5 rounded-xl font-bold bg-[#f1f5f9] text-slate-600 hover:bg-slate-200 transition-colors">Volver a Simuladores</a>
+                    <a href="index.html#inicio" class="px-8 py-3.5 rounded-xl font-black bg-[#225e47] text-white hover:bg-[#1a4a38] transition-colors shadow-soft">Ir al Inicio</a>
+                `;
+            }
+            lucide.createIcons();
+            
+            let correctCount = 0;
+            answers.forEach((ans, index) => {
+                if (ans === questionsDB[index].correct) {
+                    correctCount++;
+                }
+            });
+
+            document.getElementById('score-correct').textContent = correctCount;
+            document.getElementById('score-total').textContent = questionsDB.length;
+            
+            // Scaled over 1000 points typical for EAES/Senescyt/transformar
+            const finalScore = questionsDB.length === 0 ? 0 : Math.round((correctCount / questionsDB.length) * 1000);
+            document.getElementById('score-estimated').textContent = finalScore + '/1000';
+
+            const feedbackEl = document.getElementById('score-feedback');
+            if (finalScore >= 900) {
+                feedbackEl.innerHTML = `🌟 <strong>¡Excelente desempeño!</strong> Tienes fuertes probabilidades de ingresar a carreras de alta demanda como Medicina o ingenierías top. ¡Adquiere el pase Premium para dominar todos los temas!`;
+            } else if (finalScore >= 700) {
+                feedbackEl.innerHTML = `👍 <strong>Muy buen intento.</strong> Estás en el promedio competitivo. Con nuestra membresía Premium y banco de preguntas, llegar a los 900+ es cuestión de práctica constante.`;
+            } else {
+                feedbackEl.innerHTML = `💪 <strong>¡Necesitas prepararte más!</strong> Este simulador demostró que requieres más práctica. En Aureus Academy tenemos los recursos exactos que te prepararán para asegurar tu cupo.`;
+            }
+
+            document.getElementById('results-modal').classList.remove('hidden');
+
+            // Intento de guardar en Database de forma asincrona "silenciosa".
+            try {
+                const { data: userData } = await supabaseInstance.auth.getUser();
+                if(userData && userData.user) {
+                    await supabaseInstance.from('resultados_simuladores').insert([{
+                        estudiante_id: userData.user.id,
+                        universidad_evaluada: uniName,
+                        puntaje_final: finalScore
+                    }]);
+                }
+            } catch (e) {
+                console.log("No se guardó el resultado (usuario no autenticado u otro error)", e);
+            }
+        }
+
+        // Boot
+        document.addEventListener('DOMContentLoaded', () => {
+            preStartTimer(); // Arrancamos tiempo de una vez
+            loadQuestionsAndStart(); // Luego cargamos DB
+        });
+    </script>
+</body>
+
+</html>

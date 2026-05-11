@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - Aureus Academy</title>
+    <link rel="icon" href="../img/Icono_aureus.png">
+
+    <!-- Updated paths to lms-platform/css/ -->
+    <link rel="stylesheet" href="../lms-platform/css/global/main.css">
+    <link rel="stylesheet" href="../lms-platform/css/components/buttons.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        body {
+            background: #1a3a2d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            min-height: 100vh;
+            font-family: 'Garet', sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Atmospheric Background Elements */
+        .bg-diffusion {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .diffusion-shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.5;
+            animation: float 20s infinite alternate ease-in-out;
+        }
+
+        .shape-green {
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, #225e47 0%, transparent 70%);
+            top: -200px;
+            left: -100px;
+        }
+
+        .shape-lime {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, #aabe5c 0%, transparent 70%);
+            bottom: -150px;
+            right: -100px;
+            animation-delay: -5s;
+        }
+
+        .shape-cream {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, #f8f7f2 0%, transparent 70%);
+            top: 20%;
+            right: 15%;
+            opacity: 0.15;
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(50px, 30px) scale(1.1); }
+        }
+
+        .btn-back {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.75rem 1.25rem;
+            border-radius: 100px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-family: 'Fira Sans', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(-5px);
+            border-color: #aabe5c;
+            color: #aabe5c;
+        }
+
+        .login-box {
+            position: relative;
+            z-index: 10;
+            background: rgba(26, 58, 45, 0.4);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 3.5rem;
+            border-radius: 2.5rem;
+            box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.6);
+            width: 100%;
+            max-width: 480px;
+            animation: cardEnter 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes cardEnter {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Diffusion Background -->
+    <div class="bg-diffusion">
+        <div class="diffusion-shape shape-green"></div>
+        <div class="diffusion-shape shape-lime"></div>
+        <div class="diffusion-shape shape-cream"></div>
+    </div>
+
+    <!-- Back Button -->
+    <button class="btn-back" onclick="window.location.href='index.html'">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+        <span>Volver al Inicio</span>
+    </button>
+
+    <div class="login-box">
+        <div class="text-center mb-10">
+            <img src="../img/Icono_aureus.png" alt="Aureus Academy" class="w-20 h-20 mx-auto mb-6 rounded-2xl shadow-heavy object-contain">
+            <h1 class="text-3xl font-black text-[#225e47] fira-sans">Sistema Cerrado</h1>
+            <p class="text-slate-400 font-medium">El registro público está desactivado para garantizar la exclusividad académica.</p>
+        </div>
+
+        <div class="bg-amber-50 border-2 border-amber-200 p-6 rounded-2xl mb-8">
+            <i data-lucide="info" class="w-8 h-8 text-amber-500 mx-auto mb-3"></i>
+            <p class="text-amber-800 font-bold text-sm">¿Eres estudiante de Aureus Academy?</p>
+            <p class="text-amber-700 text-xs mt-2">Tu cuenta debe ser creada directamente por un profesor. Por favor, solicita tus credenciales de acceso al administrador de tu sede.</p>
+        </div>
+
+        <a href="login.html" class="btn btn-primary w-full !py-4">
+            Volver al Inicio de Sesión
+        </a>
+
+        <div class="mt-8">
+            <a href="https://wa.me/593987838705" class="text-[#568c75] text-[0.65rem] font-black uppercase hover:text-[#aabe5c] transition-colors">
+                Contactar a soporte técnico
+            </a>
+        </div>
+    </div>
+
+    <script>lucide.createIcons();</script>
+</body>
+
+</html>

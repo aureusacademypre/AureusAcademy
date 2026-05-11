@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Importador Universal - Aureus Academy</title>
+    <link rel="icon" href="../img/Icono_aureus.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+
+        :root {
+            --prestige-green: #1a3a2d;
+            --prestige-lime: #aabe5c;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #f8f7f2;
+            color: #1a3a2d;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 2.5rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+        }
+
+        textarea {
+            font-family: 'Fira Code', monospace;
+            scrollbar-width: thin;
+            scrollbar-color: var(--prestige-lime) transparent;
+        }
+
+        .btn-prestige {
+            background: var(--prestige-green);
+            color: white;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .btn-prestige:hover {
+            background: var(--prestige-lime);
+            color: var(--prestige-green);
+            transform: translateY(-2px);
+        }
+
+        .custom-loader {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+
+<body class="p-4 md:p-12">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <header class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+            <div>
+                <div class="flex items-center gap-3 mb-2">
+                    <div class="w-10 h-10 bg-[var(--prestige-green)] rounded-xl flex items-center justify-center shadow-lg">
+                        <img src="../img/logo.png" alt="Aureus" class="w-7 h-7 object-contain">
+                    </div>
+                    <h1 class="text-3xl font-black tracking-tight">Importador <span class="text-[var(--prestige-lime)]">Universal</span></h1>
+                </div>
+                <p class="text-slate-500 font-medium">Sistema de carga masiva de reactivos para simuladores.</p>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <a href="admin.html" class="px-6 py-3 rounded-2xl bg-white border border-slate-200 text-sm font-bold flex items-center gap-2 hover:bg-slate-50 transition-all">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                    Volver al Panel
+                </a>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- Left Panel: Form -->
+            <div class="lg:col-span-5 space-y-8">
+                <div class="glass-card p-8">
+                    <div class="flex items-center gap-4 mb-8">
+                        <div class="w-12 h-12 rounded-2xl bg-[var(--prestige-lime)]/20 text-[var(--prestige-green)] flex items-center justify-center">
+                            <i data-lucide="database" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-black tracking-tight">Configuración de Carga</h3>
+                            <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">Paso 1: Definir origen</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Categoría del Banco</label>
+                            <input type="text" id="cat-input" placeholder="Ej: Lengua y Literatura ESPOCH" 
+                                class="w-full border-2 border-slate-100 rounded-2xl p-4 focus:outline-none focus:border-[var(--prestige-lime)] bg-slate-50 text-sm font-bold transition-all">
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">JSON de Preguntas (Array)</label>
+                            <textarea id="json-input" placeholder="Pega aquí el array [...]"
+                                class="w-full h-80 border-2 border-slate-100 rounded-2xl p-4 focus:outline-none focus:border-[var(--prestige-lime)] bg-slate-50 text-xs font-medium transition-all resize-none"></textarea>
+                        </div>
+
+                        <div class="flex gap-4">
+                            <button onclick="processData()" class="flex-1 px-6 py-4 rounded-2xl border-2 border-[var(--prestige-green)] text-[var(--prestige-green)] font-black text-xs uppercase tracking-widest hover:bg-[var(--prestige-green)] hover:text-white transition-all flex items-center justify-center gap-2">
+                                <i data-lucide="eye" class="w-4 h-4"></i>
+                                Procesar y Previsualizar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Instructions Card -->
+                <div class="glass-card p-8 bg-gradient-to-br from-[var(--prestige-green)] to-[#2a4d3d] text-white">
+                    <h3 class="text-lg font-black mb-4 flex items-center gap-2">
+                        <i data-lucide="info" class="w-5 h-5 text-[var(--prestige-lime)]"></i>
+                        Guía de Uso
+                    </h3>
+                    <ul class="space-y-4 text-sm font-medium text-white/70">
+                        <li class="flex gap-3">
+                            <span class="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center text-[10px] font-black shrink-0">1</span>
+                            Escribe el nombre de la categoría (esto aparecerá en el simulador).
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center text-[10px] font-black shrink-0">2</span>
+                            Pega el array de objetos JSON tal cual te lo entrega la IA.
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center text-[10px] font-black shrink-0">3</span>
+                            Haz clic en Procesar para validar que el formato es correcto.
+                        </li>
+                        <li class="flex gap-3 text-white font-bold">
+                            <span class="w-6 h-6 rounded-full bg-[var(--prestige-lime)] text-[var(--prestige-green)] flex items-center justify-center text-[10px] font-black shrink-0">4</span>
+                            Sube a la nube y ¡listo!
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Right Panel: Preview & Actions -->
+            <div class="lg:col-span-7 space-y-8">
+                <div class="glass-card p-8 min-h-[600px] flex flex-col">
+                    <div class="flex items-center justify-between mb-12">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-600 flex items-center justify-center">
+                                <i data-lucide="clipboard-list" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-black tracking-tight">Previsualización del Banco</h3>
+                                <p class="text-xs text-slate-400 font-bold uppercase tracking-widest" id="stats-text">Esperando datos...</p>
+                            </div>
+                        </div>
+
+                        <button id="upload-btn" onclick="uploadToSupabase()" disabled 
+                            class="px-8 py-4 rounded-2xl bg-slate-200 text-slate-400 font-black text-xs uppercase tracking-widest cursor-not-allowed transition-all flex items-center gap-3">
+                            <i data-lucide="cloud-upload" class="w-4 h-4"></i>
+                            Subir a Supabase
+                        </button>
+                    </div>
+
+                    <div id="preview-list" class="space-y-6 flex-1 overflow-y-auto max-h-[700px] pr-4">
+                        <div class="h-full flex flex-col items-center justify-center text-slate-300 text-center space-y-4">
+                            <i data-lucide="layout-template" class="w-20 h-20 opacity-20"></i>
+                            <p class="font-bold">No hay datos procesados.<br>Pega un JSON y presiona Procesar.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Inicializar Lucide
+        lucide.createIcons();
+
+        let processedData = [];
+        let currentCategory = "";
+
+        // Template de ejemplo (Lengua y Literatura que ya tenemos)
+        const templateEjemplo = [
+          { id: 1, bloque: "La entrevista", pregunta: "La entrevista es un texto de comunicación oral o escrita que tiene como finalidad principal:", opciones: { A: "obtener información mediante preguntas y respuestas", B: "narrar hechos ficticios con personajes imaginarios", C: "describir únicamente paisajes naturales", D: "copiar información sin citar fuentes" }, respuestaCorrecta: "A", svg: null },
+          { id: 2, bloque: "Búsqueda de información", pregunta: "Una búsqueda de información adecuada debe iniciar con:", opciones: { A: "definir claramente el tema o pregunta de investigación", B: "copiar el primer texto encontrado", C: "ignorar la fuente consultada", D: "evitar comparar información" }, respuestaCorrecta: "A", svg: null }
+        ];
+
+        window.onload = () => {
+            document.getElementById('cat-input').value = "Lengua y Literatura ESPOCH";
+            // No ponemos todo el array para no saturar, pero el usuario puede pegarlo
+        };
+
+        function processData() {
+            const cat = document.getElementById('cat-input').value.trim();
+            const jsonStr = document.getElementById('json-input').value.trim();
+            const previewList = document.getElementById('preview-list');
+            const statsText = document.getElementById('stats-text');
+            const uploadBtn = document.getElementById('upload-btn');
+
+            if (!cat) {
+                alert("Por favor ingresa una categoría.");
+                return;
+            }
+
+            try {
+                const rawArray = JSON.parse(jsonStr);
+                if (!Array.isArray(rawArray)) throw new Error("Los datos deben ser un Array []");
+
+                currentCategory = cat;
+                processedData = rawArray.map(q => {
+                    const letterToIndex = { 'A': 0, 'B': 1, 'C': 2, 'D': 3 };
+                    return {
+                        categoria: currentCategory,
+                        texto_pregunta: q.pregunta,
+                        opciones: [q.opciones.A, q.opciones.B, q.opciones.C, q.opciones.D],
+                        correcta_index: letterToIndex[q.respuestaCorrecta],
+                        imagen_svg: q.svg || null
+                    };
+                });
+
+                // Renderizar Preview
+                previewList.innerHTML = "";
+                processedData.forEach((q, i) => {
+                    const card = document.createElement('div');
+                    card.className = "p-6 bg-white border border-slate-100 rounded-3xl shadow-sm";
+                    card.innerHTML = `
+                        <div class="flex items-start justify-between gap-4">
+                            <span class="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-xs font-black text-slate-400">${i+1}</span>
+                            <div class="flex-1">
+                                <p class="font-bold text-slate-800 mb-4">${q.texto_pregunta}</p>
+                                ${q.imagen_svg ? `<div class="mb-4 flex justify-center">${q.imagen_svg}</div>` : ''}
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    ${q.opciones.map((opt, idx) => `
+                                        <div class="p-3 rounded-xl border text-sm font-medium ${idx === q.correcta_index ? 'bg-green-50 border-green-200 text-green-700' : 'bg-slate-50 border-slate-100 text-slate-500'}">
+                                            ${opt}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    previewList.appendChild(card);
+                });
+
+                statsText.textContent = `${processedData.length} reactivos listos para subir`;
+                uploadBtn.disabled = false;
+                uploadBtn.className = "px-8 py-4 rounded-2xl bg-[var(--prestige-green)] text-white font-black text-xs uppercase tracking-widest hover:bg-[var(--prestige-lime)] hover:text-[var(--prestige-green)] transition-all flex items-center gap-3 shadow-lg shadow-green-900/10";
+                
+                lucide.createIcons();
+
+            } catch (err) {
+                alert("Error al procesar JSON: " + err.message);
+                console.error(err);
+            }
+        }
+
+        async function uploadToSupabase() {
+            if (processedData.length === 0) return;
+
+            const btn = document.getElementById('upload-btn');
+            const originalContent = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = `<div class="custom-loader"></div> Subiendo...`;
+
+            const supabaseUrl = 'https://ajbriylkkfullbcipxii.supabase.co';
+            const supabaseKey = 'sb_publishable_YPkUzbD2dq0DWbQQG0qvJA_04f5-xOY';
+            const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+            try {
+                // Fragmentar en lotes de 50 para evitar limites de payload
+                const batchSize = 50;
+                for (let i = 0; i < processedData.length; i += batchSize) {
+                    const batch = processedData.slice(i, i + batchSize);
+                    const { error } = await supabase.from('preguntas').insert(batch);
+                    if (error) throw error;
+                }
+
+                btn.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4"></i> ¡Carga Completada!`;
+                btn.className = "px-8 py-4 rounded-2xl bg-blue-600 text-white font-black text-xs uppercase tracking-widest flex items-center gap-3 shadow-lg";
+                lucide.createIcons();
+                
+                alert(`¡Éxito! Se han cargado ${processedData.length} preguntas en la categoría "${currentCategory}".`);
+                
+            } catch (err) {
+                alert("Error en la subida: " + err.message);
+                btn.disabled = false;
+                btn.innerHTML = originalContent;
+                btn.className = "px-8 py-4 rounded-2xl bg-red-600 text-white font-black text-xs uppercase tracking-widest flex items-center gap-3 shadow-lg";
+            }
+        }
+    </script>
+</body>
+
+</html>
