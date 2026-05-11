@@ -1,0 +1,49 @@
+/* Card Components */
+
+.tarj {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    border: 1px solid var(--border-color);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+}
+
+.tarj:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--shadow-heavy);
+    border-color: var(--green-light);
+}
+
+.tit-tarj {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--green-dark);
+}
+
+.desc-tarj {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+/* University Card specific styles */
+.uni-card {
+    cursor: pointer;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.uni-logo {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
+.uni-card:hover .uni-logo {
+    transform: scale(1.1);
+}
