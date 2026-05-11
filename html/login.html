@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Aureus Academy</title>
+    <link rel="icon" href="../img/Icono_aureus.png">
+
+    <!-- Updated paths to lms-platform/css/ -->
+    <link rel="stylesheet" href="../lms-platform/css/global/main.css">
+    <link rel="stylesheet" href="../lms-platform/css/components/buttons.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        body {
+            background: #1a3a2d; /* Deep Aureus Green */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            min-height: 100vh;
+            font-family: 'Garet', sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Atmospheric Background Elements */
+        .bg-diffusion {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .diffusion-shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.5;
+            animation: float 20s infinite alternate ease-in-out;
+        }
+
+        .shape-green {
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, #225e47 0%, transparent 70%);
+            top: -200px;
+            left: -100px;
+        }
+
+        .shape-lime {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, #aabe5c 0%, transparent 70%);
+            bottom: -150px;
+            right: -100px;
+            animation-delay: -5s;
+        }
+
+        .shape-cream {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, #f8f7f2 0%, transparent 70%);
+            top: 20%;
+            right: 15%;
+            opacity: 0.15;
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(50px, 30px) scale(1.1); }
+        }
+
+        .btn-back {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+            padding: 1.125rem;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            font-family: 'Fira Sans', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(-5px);
+            border-color: #aabe5c;
+            color: #aabe5c;
+        }
+
+        .prestige-card {
+            position: relative;
+            z-index: 10;
+            background: rgba(26, 58, 45, 0.4); /* Dark green tint */
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 3.5rem;
+            border-radius: 2.5rem;
+            box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.6);
+            width: 100%;
+            max-width: 460px;
+            animation: cardEnter 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        
+        @keyframes cardEnter {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .input-elegant {
+            width: 100%;
+            padding: 1.125rem 1.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 1rem;
+            color: white;
+            font-family: 'Garet', sans-serif;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .input-elegant:focus {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--green-light);
+            box-shadow: 0 0 30px rgba(170, 190, 92, 0.1);
+        }
+
+        .input-elegant::placeholder {
+            color: rgba(255, 255, 255, 0.2);
+        }
+
+        .label-elegant {
+            display: block;
+            font-family: 'Fira Sans', sans-serif;
+            font-weight: 700;
+            color: var(--green-light);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            font-size: 0.7rem;
+            margin-bottom: 0.75rem;
+            opacity: 0.9;
+        }
+
+        .btn-prestige {
+            background: var(--green-light);
+            color: #1a3a2d;
+            font-weight: 800;
+            font-family: 'Fira Sans', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 1.25rem;
+            border-radius: 1rem;
+            width: 100%;
+            box-shadow: 0 15px 35px rgba(170, 190, 92, 0.2);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-prestige:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px rgba(170, 190, 92, 0.3);
+            background: #b8ca62;
+        }
+
+        .btn-prestige:active {
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Diffusion Background -->
+    <div class="bg-diffusion">
+        <div class="diffusion-shape shape-green"></div>
+        <div class="diffusion-shape shape-lime"></div>
+        <div class="diffusion-shape shape-cream"></div>
+    </div>
+
+    <div class="prestige-card">
+        <div class="text-center mb-10">
+            <div class="inline-block p-1 bg-white/5 rounded-3xl backdrop-blur-md border border-white/10 mb-6 group transition-transform hover:scale-110 duration-500">
+                <img src="../img/logo.png" alt="Aureus Logo"
+                    class="w-24 h-24 rounded-[1.4rem] shadow-2xl object-contain bg-[#1a3a2d] p-1 border border-white/5">
+            </div>
+            <h1 class="text-3xl font-black text-white fira-sans tracking-tight mb-2">Aureus Academy</h1>
+            <p class="text-white/50 font-medium text-sm tracking-wide uppercase">Preuniversitario de Excelencia</p>
+        </div>
+
+        <form id="form-log" onsubmit="handleLogin(event)" class="space-y-6">
+            <div>
+                <label class="label-elegant">Correo Institucional</label>
+                <input type="email" id="email" class="input-elegant" placeholder="tu@email.com" required>
+            </div>
+
+            <div>
+                <label class="label-elegant">Contraseña</label>
+                <input type="password" id="password" class="input-elegant" placeholder="••••••••" required>
+            </div>
+
+            <div class="flex flex-col gap-4 mt-8">
+                <button type="submit" class="btn-prestige" id="btn-log">
+                    Acceder al Portal
+                </button>
+
+                <!-- Second Action Area -->
+                <button type="button" class="btn-back" onclick="window.location.href='index.html'">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                    <span>Volver al Inicio</span>
+                </button>
+            </div>
+        </form>
+
+        <div class="mt-10 pt-8 border-t border-white/10 text-center space-y-4">
+            <div class="flex flex-col items-center gap-2">
+                <p class="text-[0.65rem] text-white/40 font-black uppercase tracking-[0.2em]">¿Nuevo aspirante?</p>
+                <a href="register.html" class="text-white hover:text-var(--green-light) text-sm font-black uppercase transition-colors tracking-widest decoration-1 hover:underline">
+                    Crear una cuenta
+                </a>
+            </div>
+            
+            <a href="https://wa.me/593985813254" target="_blank" class="flex items-center justify-center gap-2 text-white/30 hover:text-white/60 transition-colors py-2">
+                <i data-lucide="help-circle" class="w-4 h-4"></i>
+                <span class="text-[0.65rem] font-bold uppercase tracking-widest">Soporte Técnico</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Supabase Core -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../lms-platform/js/supabase-client.js"></script>
+
+    <script>
+        async function handleLogin(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-log');
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            btn.disabled = true;
+            btn.innerText = 'Verificando...';
+
+            try {
+                // 1. Autenticación en Supabase
+                const { data: authData, error: authError } = await window.supabaseClient.auth.signInWithPassword({
+                    email,
+                    password
+                });
+
+                if (authError) throw authError;
+
+                const user = authData.user;
+                console.log("Sesión iniciada:", user.email);
+
+                // 2. Obtener Perfil y Rol
+                const { data: profile, error: profileError } = await window.supabaseClient
+                    .from('perfiles')
+                    .select('*')
+                    .eq('id', user.id)
+                    .single();
+
+                if (profileError && profileError.code !== 'PGRST116') { // PGRST116 es "no rows found"
+                    console.error("Error al obtener perfil:", profileError);
+                }
+
+                // 3. Redirección por Rol (Consulta fresca a la DB)
+                const finalRol = profile ? profile.rol : 'estudiante';
+                const finalNombre = profile ? profile.nombre_completo : 'Usuario';
+                
+                const sessionData = {
+                    ...profile, // Incluir todos los campos (universidad_destino, etc)
+                    id: user.id,
+                    email: user.email,
+                    nombre: finalNombre,
+                    rol: finalRol
+                };
+                
+                localStorage.setItem('aureus_sesion', JSON.stringify(sessionData));
+
+                if (finalRol === 'admin' || finalRol === 'profesor') {
+                    window.location.href = 'admin.html';
+                } else {
+                    window.location.href = 'dashboard.html';
+                }
+
+            } catch (error) {
+                console.error('Error en login:', error);
+                
+                let errorMsg = error.message;
+                if (errorMsg.includes('Invalid login credentials')) {
+                    errorMsg = 'El correo o la contraseña son incorrectos.';
+                } else if (errorMsg.includes('Email not confirmed')) {
+                    errorMsg = 'Debes confirmar tu correo (revisa la casilla "Auto Confirm" al crear el usuario).';
+                }
+
+                alert("Error de acceso: " + errorMsg);
+                btn.disabled = false;
+                btn.innerText = 'Acceder al Portal';
+            }
+        }
+    </script>
+</body>
+
+</html>
