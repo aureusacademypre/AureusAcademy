@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contáctanos | Aureus Academy</title>
+    <link rel="icon" href="../img/Icono_aureus.png">
+
+    <!-- Dependencias Modernas (Sincronización) -->
+    <link rel="stylesheet" href="../lms-platform/css/global/main.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'Garet';
+            src: url('../fonts/Garet-Regular.otf') format('opentype');
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Garet', sans-serif;
+            background: #f8f7f2;
+            color: #333;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        button,
+        nav a {
+            font-family: 'Fira Sans', sans-serif;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        img {
+            max-width: 100%;
+            display: block;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        /* === CONTENEDOR === */
+        .caja {
+            max-width: 80rem;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* === BARRA === */
+        .barra {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: rgba(34, 94, 71, 0.95);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .barra-int {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 5rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+        }
+
+        .logo-img {
+            height: 3rem;
+            width: 3rem;
+            border-radius: .5rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .logo-txt {
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.125rem;
+        }
+
+        .logo-sub {
+            color: #aabe5c;
+            font-size: .7rem;
+            font-weight: 500;
+            letter-spacing: .15em;
+            text-transform: uppercase;
+        }
+
+        /* Nav escritorio */
+        .nav-desk {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .enlace {
+            position: relative;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+            font-size: .875rem;
+            letter-spacing: .025em;
+            transition: color .15s;
+        }
+
+        .enlace:hover {
+            color: #fff;
+        }
+
+        .enlace::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #aabe5c;
+            transition: width .3s;
+        }
+
+        .enlace:hover::after {
+            width: 100%;
+        }
+
+        .btn-ingresar {
+            background: #aabe5c;
+            color: #225e47;
+            font-weight: 700;
+            font-size: .875rem;
+            padding: .625rem 1.5rem;
+            border-radius: .5rem;
+            margin-left: 1rem;
+            transition: all .2s;
+        }
+
+        .btn-ingresar:hover {
+            background: #b8ca62;
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Menú móvil */
+        .menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: #fff;
+            padding: .5rem;
+            cursor: pointer;
+        }
+
+        .menu-movil {
+            display: none;
+            background: #1a4a38;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+        }
+
+        .menu-movil.activo {
+            display: block;
+        }
+
+        .enlace-mov {
+            display: block;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+            padding: .625rem .75rem;
+            border-radius: .5rem;
+            transition: all .15s;
+        }
+
+        .enlace-mov:hover {
+            color: #aabe5c;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .btn-ingresar-mov {
+            display: block;
+            background: #aabe5c;
+            color: #225e47;
+            font-weight: 700;
+            text-align: center;
+            padding: .75rem;
+            border-radius: .5rem;
+            margin-top: .75rem;
+        }
+
+        /* === HERO === */
+        .hero {
+            background: linear-gradient(135deg, rgba(34, 94, 71, 0.88), rgba(26, 74, 56, 0.75)), url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1600&q=80') center/cover no-repeat;
+            min-height: 40vh;
+            display: flex;
+            align-items: center;
+            padding-top: 5rem;
+        }
+
+        .hero-contenido {
+            max-width: 40rem;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(170, 190, 92, 0.2);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(170, 190, 92, 0.3);
+            border-radius: 9999px;
+            padding: .375rem 1.25rem;
+            margin-bottom: 1.5rem;
+            color: #aabe5c;
+            font-weight: 600;
+            font-size: .875rem;
+        }
+
+        .hero-titulo {
+            font-weight: 800;
+            font-size: 2.5rem;
+            color: #fff;
+            line-height: 1.15;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-titulo span {
+            color: #aabe5c;
+        }
+
+        /* === SECCIONES === */
+        .seccion {
+            padding: 5rem 0;
+        }
+
+        .seccion-blanca {
+            background: #fff;
+        }
+
+        .titulo {
+            font-weight: 800;
+            color: #225e47;
+            font-size: 1.875rem;
+            margin-top: .75rem;
+            margin-bottom: 1rem;
+        }
+
+        .etiqueta {
+            color: #568c75;
+            font-weight: 600;
+            font-size: .875rem;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+        }
+
+        .dos-cols {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .parrafo {
+            color: #6b7280;
+            font-size: 1rem;
+            line-height: 1.625;
+            margin-bottom: 1.5rem;
+        }
+
+        /* === CONTACTO === */
+        .info-fila {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .icono-info {
+            width: 3rem;
+            height: 3rem;
+            background: rgba(34, 94, 71, 0.1);
+            border-radius: .75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #225e47;
+            font-size: .875rem;
+        }
+
+        .info-valor {
+            color: #6b7280;
+            font-size: .875rem;
+        }
+
+        .btn-wa {
+            display: inline-flex;
+            align-items: center;
+            gap: .75rem;
+            background: #22c55e;
+            color: #fff;
+            font-weight: 700;
+            padding: .875rem 1.5rem;
+            border-radius: .75rem;
+            transition: all .2s;
+            margin-top: 1rem;
+        }
+
+        .btn-wa:hover {
+            background: #16a34a;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .formulario {
+            background: #f8f7f2;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            border: 1px solid #f3f4f6;
+        }
+
+        .campo-grupo {
+            margin-bottom: 1.25rem;
+        }
+
+        .campo-label {
+            display: block;
+            font-weight: 600;
+            color: #225e47;
+            font-size: .875rem;
+            margin-bottom: .5rem;
+            font-family: 'Fira Sans', sans-serif;
+        }
+
+        .campo {
+            width: 100%;
+            padding: .75rem 1rem;
+            border-radius: .75rem;
+            border: 1px solid #e5e7eb;
+            background: #fff;
+            font-family: 'Garet', sans-serif;
+            font-size: .875rem;
+            outline: none;
+            transition: all .15s;
+        }
+
+        .campo:focus {
+            box-shadow: 0 0 0 2px rgba(86, 140, 117, 0.3);
+            border-color: #568c75;
+        }
+
+        .btn-enviar {
+            width: 100%;
+            background: #225e47;
+            color: #fff;
+            font-weight: 700;
+            font-family: 'Fira Sans', sans-serif;
+            padding: .875rem;
+            border-radius: .75rem;
+            border: none;
+            cursor: pointer;
+            transition: all .2s;
+            font-size: 1rem;
+        }
+
+        .btn-enviar:hover {
+            background: #1a4a38;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* === FOOTER === */
+        .pie {
+            background: linear-gradient(135deg, #225e47, #1a4a38);
+            color: #fff;
+            padding: 4rem 0 2rem;
+        }
+
+        .pie-grilla {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .pie-logo {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .pie-logo img {
+            height: 2.5rem;
+            width: 2.5rem;
+            border-radius: .5rem;
+        }
+
+        .pie-titulo {
+            font-weight: 700;
+            font-size: .875rem;
+            letter-spacing: .05em;
+            text-transform: uppercase;
+            margin-bottom: 1.25rem;
+        }
+
+        .pie-enlace {
+            display: block;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: .875rem;
+            transition: color .15s;
+            margin-bottom: .75rem;
+        }
+
+        .pie-enlace:hover {
+            color: #aabe5c;
+        }
+
+        .pie-texto {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: .875rem;
+            margin-bottom: .75rem;
+        }
+
+        .pie-linea {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 2rem;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: .875rem;
+        }
+
+        /* === WHATSAPP FLOTANTE === */
+        .wa-float {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 50;
+            background: #22c55e;
+            color: #fff;
+            width: 4rem;
+            height: 4rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            transition: all .2s;
+            animation: pulso 2s infinite;
+        }
+
+        .wa-float:hover {
+            background: #16a34a;
+            transform: scale(1.1);
+        }
+
+        @keyframes pulso {
+            0% {
+                box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.5)
+            }
+
+            70% {
+                box-shadow: 0 0 0 15px rgba(37, 211, 102, 0)
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(37, 211, 102, 0)
+            }
+        }
+
+        /* === ANIMACIÓN === */
+        .aparece {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity .7s, transform .7s;
+        }
+
+        .aparece.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* === RESPONSIVE === */
+        @media(max-width:1023px) {
+            .nav-desk {
+                display: none;
+            }
+
+            .menu-btn {
+                display: block;
+            }
+
+            .dos-cols {
+                grid-template-columns: 1fr;
+            }
+
+            .pie-grilla {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media(max-width:767px) {
+            .hero-titulo {
+                font-size: 2rem;
+            }
+        }
+
+        @media(max-width:480px) {
+            .pie-grilla {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media(min-width:640px) {
+            .hero-titulo {
+                font-size: 3rem;
+            }
+        }
+
+        @media(min-width:1024px) {
+            .hero-titulo {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- BARRA GLOBAL SINCRONIZADA -->
+    <nav class="fixed top-0 inset-x-0 h-20 bg-[var(--green-dark)] text-white flex items-center px-8 z-50 shadow-md">
+        <div class="flex items-center gap-4">
+            <a href="index.html" class="flex items-center gap-3">
+                <img src="../img/logo.png" alt="Aureus Academy Logo"
+                    class="w-12 h-12 rounded-lg shadow-sm border border-white/10">
+                <div class="flex flex-col">
+                    <span class="font-bold text-xl leading-none tracking-tight">Aureus Academy</span>
+                    <span
+                        class="text-[0.65rem] text-[#aabe5c] font-bold tracking-widest uppercase mt-1">Preuniversitario</span>
+                </div>
+            </a>
+        </div>
+        <div class="ml-auto flex gap-8 font-bold text-sm uppercase items-center">
+            <a href="index.html" class="opacity-70 hover:opacity-100 transition-opacity">Inicio</a>
+            <a href="index.html#nosotros" class="opacity-70 hover:opacity-100 transition-opacity">Nosotros</a>
+            <a href="uni.html" class="opacity-70 hover:opacity-100 transition-opacity">Universidades</a>
+            <a href="simuladores.html" class="opacity-70 hover:opacity-100 transition-opacity">Simuladores</a>
+            <a href="contactanos.html" class="text-[#aabe5c] underline underline-offset-8 decoration-2">Contacto</a>
+            <a href="login.html"
+                class="bg-[#aabe5c] text-[var(--green-dark)] px-5 py-2.5 rounded-xl hover:bg-white hover:shadow-lg transition-all transform hover:-translate-y-0.5">Ingresar</a>
+        </div>
+    </nav>
+
+    <!-- HERO SIMPLIFICADO PARA CONTACTO -->
+    <section class="hero">
+        <div class="caja">
+            <div class="hero-contenido">
+                <span class="badge">Atención Personalizada</span>
+                <h2 class="hero-titulo">Estamos para <span>ayudarte</span></h2>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACTO -->
+    <section id="contacto" class="seccion seccion-blanca">
+        <div class="caja">
+            <div class="dos-cols">
+                <div class="aparece">
+                    <span class="etiqueta">Contáctanos</span>
+                    <h2 class="titulo">¿Listo para dar el primer paso?</h2>
+                    <p class="parrafo">Escríbenos y un asesor académico te guiará en el proceso de inscripción.</p>
+                    <div class="info-fila">
+                        <div class="icono-info"><svg width="20" height="20" fill="none" stroke="#225e47"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg></div>
+                        <div>
+                            <p class="info-label">Email</p>
+                            <p class="info-valor">info@aureusacademy.com</p>
+                        </div>
+                    </div>
+                    <div class="info-fila">
+                        <div class="icono-info"><svg width="20" height="20" fill="none" stroke="#225e47"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                            </svg></div>
+                        <div>
+                            <p class="info-label">Teléfono</p>
+                            <p class="info-valor">+593 98 783 8705</p>
+                        </div>
+                    </div>
+                    <a href="https://wa.me/593987838705" target="_blank" class="btn-wa">
+                        <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                        </svg>
+                        Escríbenos por WhatsApp
+                    </a>
+                </div>
+                <div class="aparece">
+                    <form class="formulario">
+                        <div class="campo-grupo"><label class="campo-label">Nombre completo</label><input type="text"
+                                class="campo" placeholder="Tu nombre"></div>
+                        <div class="campo-grupo"><label class="campo-label">Correo electrónico</label><input
+                                type="email" class="campo" placeholder="tu@email.com"></div>
+                        <div class="campo-grupo"><label class="campo-label">Mensaje</label><textarea rows="4"
+                                class="campo" style="resize:none" placeholder="¿En qué te podemos ayudar?"></textarea>
+                        </div>
+                        <button type="submit" class="btn-enviar">Enviar Mensaje</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Estándar -->
+    <footer class="bg-[var(--green-dark)] text-white py-20 px-6 border-t border-white/5">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+                <div>
+                    <div class="flex items-center gap-3 mb-6">
+                        <img src="../img/logo.png" alt="Aureus" class="w-10 h-10 rounded-lg">
+                        <h4 class="font-bold text-lg">Aureus Academy</h4>
+                    </div>
+                    <p class="text-white/50 text-sm leading-relaxed">Formación académica de excelencia para tu ingreso
+                        universitario. El preuniversitario #1 del Ecuador.</p>
+                </div>
+                <div>
+                    <h5 class="font-black text-[#aabe5c] text-xs uppercase tracking-widest mb-6">Plataforma</h5>
+                    <ul class="space-y-4">
+                        <li><a href="simuladores.html"
+                                class="text-white/70 hover:text-white transition-colors">Simuladores</a></li>
+                        <li><a href="uni.html"
+                                class="text-white/70 hover:text-white transition-colors">Universidades</a></li>
+                        <li><a href="login.html" class="text-white/70 hover:text-white transition-colors">Aula
+                                Virtual</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-black text-[#aabe5c] text-xs uppercase tracking-widest mb-6">Redes Sociales</h5>
+                    <ul class="space-y-4">
+                        <li><a href="https://www.instagram.com/aureus.academypre/" target="_blank"
+                                class="text-white/70 hover:text-white transition-colors flex items-center gap-2 text-sm font-medium">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4s1.791-4 4-4 4 1.791 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                                </svg>
+                                Instagram</a></li>
+                        <li><a href="https://www.tiktok.com/@aureus.academypre"
+                                class="text-white/70 hover:text-white transition-colors flex items-center gap-2 text-sm font-medium">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.17-2.81-.6-4.03-1.37-.88-.55-1.65-1.25-2.23-2.1-.01 3.51.01 7.02-.02 10.53-.06 1.61-.45 3.27-1.43 4.54-1.21 1.58-3.3 2.56-5.28 2.45-1.76-.1-3.5-.96-4.57-2.39-1.21-1.62-1.41-3.87-.53-5.69.7-1.44 2.1-2.54 3.7-2.8 1.1-.18 2.22-.05 3.25.4v4.3c-.63-.37-1.36-.5-2.09-.41-1.07.13-1.99.96-2.18 2.02-.21 1.25.5 2.53 1.71 2.87 1.2.33 2.6-.33 3.03-1.5.17-.46.22-.96.22-1.45V.02z" />
+                                </svg>
+                                TikTok</a></li>
+                        <li><a href="https://wa.me/593987838705" target="_blank"
+                                class="text-white/70 hover:text-white transition-colors flex items-center gap-2 text-sm font-medium">
+                                <i data-lucide="message-circle" class="w-4 h-4"></i> WhatsApp</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-black text-[#aabe5c] text-xs uppercase tracking-widest mb-6">Soporte Técnico</h5>
+                    <a href="https://wa.me/593985813254" target="_blank"
+                        class="bg-white/10 p-4 rounded-xl flex items-center gap-3 hover:bg-white/20 transition-all border border-white/10">
+                        <i data-lucide="help-circle" class="text-[#25d366]"></i>
+                        <div>
+                            <p class="font-bold text-sm">Chat de Soporte</p>
+                            <p class="text-[10px] text-white/50">Asistencia técnica 24/7</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div
+                class="pt-8 border-t border-white/5 text-center text-white/30 text-xs font-bold uppercase tracking-widest">
+                © 2026 Aureus Academy • Excelencia Académica Superior
+            </div>
+        </div>
+    </footer>
+
+    <!-- WHATSAPP -->
+    <a href="https://wa.me/593987838705" target="_blank" class="wa-float" title="WhatsApp">
+        <svg width="32" height="32" fill="currentColor" viewBox="0 0 24 24">
+            <path
+                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+        </svg>
+    </a>
+
+    <script>
+        function toggleMenu() { document.getElementById('menuMovil').classList.toggle('activo'); }
+        function closeMenu() { document.getElementById('menuMovil').classList.remove('activo'); }
+        const obs = new IntersectionObserver(e => { e.forEach(el => { if (el.isIntersecting) el.target.classList.add('visible'); }); }, { threshold: .1, rootMargin: '0px 0px -50px 0px' });
+        document.querySelectorAll('.aparece').forEach(el => obs.observe(el));
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>
