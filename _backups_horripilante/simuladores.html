@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simuladores Oficiales - Aureus Academy</title>
+    <link rel="icon" href="../img/Icono_aureus.png">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="../lms-platform/css/global/main.css">
+    <link rel="stylesheet" href="../lms-platform/css/components/buttons.css">
+    <link rel="stylesheet" href="../lms-platform/css/components/cards.css">
+
+    <!-- Icons & Tailwind -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        .sim-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .sim-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: 2rem 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border: 2px solid transparent;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .sim-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(34, 94, 71, 0.1), 0 10px 10px -5px rgba(34, 94, 71, 0.04);
+            border-color: #aabe5c;
+        }
+
+        .sim-logo-container {
+            width: 110px;
+            height: 110px;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+            border-radius: 50%;
+            padding: 1rem;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+            border: 1px solid #f1f5f9;
+        }
+
+        .sim-logo-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            filter: grayscale(15%) contrast(1.1);
+            transition: filter 0.3s ease;
+        }
+
+        .sim-card:hover .sim-logo-container img {
+            filter: grayscale(0%) contrast(1.1);
+        }
+
+        .sim-title {
+            font-size: 1.25rem;
+            font-weight: 900;
+            color: #225e47;
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+        }
+
+        .sim-desc {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 2rem;
+            flex-grow: 1;
+            font-weight: 500;
+        }
+
+        .premium-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 900;
+            padding: 0.35rem 0.75rem;
+            border-radius: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            box-shadow: 0 2px 4px rgba(217, 119, 6, 0.3);
+        }
+
+        /* Hero matching Precavidos style */
+        .hero-sim {
+            background: linear-gradient(135deg, #1f4d3a 0%, #112e23 100%);
+            border-radius: 2.5rem;
+            padding: 4.5rem 2rem;
+            color: white;
+            text-align: center;
+            margin-bottom: 4rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px -15px rgba(34, 94, 71, 0.5);
+        }
+
+        .hero-sim::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -10%;
+            width: 50%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.03);
+            transform: rotate(30deg);
+            pointer-events: none;
+        }
+
+        /* MODAL STYLE */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 2.5rem;
+            width: 100%;
+            max-width: 450px;
+            padding: 3rem 2.5rem;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            border: 1px solid rgba(170, 190, 92, 0.2);
+        }
+
+        .modal-icon-bg {
+            width: 80px;
+            height: 80px;
+            background: rgba(170, 190, 92, 0.1);
+            border-radius: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: #225e47;
+        }
+
+        .coupon-input {
+            width: 100%;
+            background: #f8f7f2;
+            border: 2px solid #e2e8f0;
+            border-radius: 1.25rem;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #225e47;
+            text-align: center;
+            transition: all 0.3s;
+            margin-bottom: 1rem;
+            outline: none;
+        }
+
+        .coupon-input:focus {
+            border-color: #aabe5c;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(170, 190, 92, 0.1);
+        }
+    </style>
+</head>
+
+<body class="bg-[#f8f7f2]">
+    <nav class="fixed top-0 inset-x-0 h-20 bg-[var(--green-dark)] text-white flex items-center px-8 z-50 shadow-md">
+        <div class="flex items-center gap-4">
+            <a href="index.html" class="flex items-center gap-3">
+                <img src="../img/logo.png" alt="Aureus Academy Logo"
+                    class="w-12 h-12 rounded-lg shadow-sm border border-white/10">
+                <div class="flex flex-col">
+                    <span class="font-bold text-xl leading-none tracking-tight">Aureus Academy</span>
+                    <span
+                        class="text-[0.65rem] text-[#aabe5c] font-bold tracking-widest uppercase mt-1">Preuniversitario</span>
+                </div>
+            </a>
+        </div>
+        <div class="ml-auto flex gap-8 font-bold text-sm uppercase items-center">
+            <a href="index.html" class="opacity-70 hover:opacity-100 transition-opacity">Inicio</a>
+            <a href="index.html#nosotros" class="opacity-70 hover:opacity-100 transition-opacity">Nosotros</a>
+            <a href="uni.html" class="opacity-70 hover:opacity-100 transition-opacity">Universidades</a>
+            <a href="simuladores.html" class="text-[#aabe5c] underline underline-offset-8 decoration-2">Simuladores</a>
+            <a href="contactanos.html" class="opacity-70 hover:opacity-100 transition-opacity">Contacto</a>
+            <a href="login.html" id="nav-login-btn"
+                class="bg-[#aabe5c] text-[var(--green-dark)] px-5 py-2.5 rounded-xl hover:bg-white hover:shadow-lg transition-all transform hover:-translate-y-0.5">Ingresar</a>
+            <a href="dashboard.html" id="nav-dashboard-link"
+                class="hidden bg-[#aabe5c] text-[var(--green-dark)] px-5 py-2.5 rounded-xl hover:bg-white hover:shadow-lg transition-all transform hover:-translate-y-0.5">Mi
+                Dashboard</a>
+        </div>
+    </nav>
+
+    <main class="pt-32 pb-20 max-w-7xl mx-auto px-6">
+        <!-- Hero Section -->
+        <div class="hero-sim">
+            <div
+                class="inline-flex items-center gap-2 bg-white/10 px-5 py-2 rounded-full text-sm font-bold mb-6 backdrop-blur-md border border-white/20 shadow-inner">
+                <i data-lucide="zap" class="w-4 h-4 text-amber-400 fill-amber-400"></i>
+                <span class="text-white">Práctica Ilimitada Premium</span>
+            </div>
+            <h1 class="text-4xl md:text-6xl font-black mb-5 tracking-tight fira-sans text-white">Simuladores Oficiales
+                de Admisión
+            </h1>
+            <p class="text-lg md:text-xl text-white/80 max-w-3xl mx-auto mb-2 font-medium">
+                Accede al banco de preguntas más grande y actualizado del Ecuador. Renderizamos la plataforma idéntica
+                al examen real de la universidad de tus sueños.
+            </p>
+        </div>
+
+        <!-- Búsqueda y Filtros -->
+        <div class="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
+            <div>
+                <h2 class="text-3xl font-extrabold text-[#225e47] fira-sans mb-1">Elige tu Universidad</h2>
+                <p class="text-slate-500 font-medium">Contamos con simuladores exactos y parametrizados para cada IES.
+                </p>
+            </div>
+            <div class="relative w-full md:w-80">
+                <input type="text" id="search-sim" placeholder="Buscar universidad (ej. UCE, EPN...)"
+                    class="w-full bg-white border-2 border-slate-200 rounded-2xl px-12 py-3.5 text-sm font-bold text-slate-700 focus:border-[#568c75] focus:ring-4 focus:ring-[#568c75]/20 transition-all outline-none shadow-sm placeholder:font-normal">
+                <i data-lucide="search" class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+            </div>
+        </div>
+
+        <!-- Grilla de Simuladores -->
+        <div class="sim-grid" id="simulators-grid">
+            <!-- Creados dinámicamente vía JS -->
+        </div>
+
+        <!-- MODAL DE CUPONES (Oculto por defecto) -->
+        <div id="coupon-modal" class="modal-overlay hidden">
+            <div class="modal-content animate-fade-in-up">
+                <button onclick="closeCouponModal()"
+                    class="absolute top-6 right-6 text-slate-400 hover:text-slate-600 transition-colors">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+
+                <div class="modal-icon-bg">
+                    <i data-lucide="shield-check" class="w-10 h-10"></i>
+                </div>
+
+                <h3 class="text-2xl font-black text-[#225e47] mb-2 fira-sans">Simulador Protegido</h3>
+                <p class="text-slate-500 text-sm mb-8 font-medium">Ingresa tu código de acceso personal para desbloquear
+                    la práctica ilimitada.</p>
+
+                <div class="space-y-4">
+                    <input type="text" id="student-name" placeholder="Tu Nombre Completo"
+                        class="coupon-input uppercase text-sm">
+                    <input type="text" id="access-code" placeholder="Código: AUR-XXXX-XXXX"
+                        class="coupon-input uppercase tracking-widest">
+
+                    <button id="activate-btn" onclick="validateCoupon()"
+                        class="w-full bg-[#225e47] text-white font-bold py-4 rounded-2xl hover:bg-[#1a4a38] transition-all shadow-lg flex items-center justify-center gap-2 uppercase text-xs tracking-widest">
+                        Activar Ahora
+                    </button>
+                </div>
+
+                <div class="mt-8 pt-8 border-t border-slate-100">
+                    <p class="text-xs text-slate-400 font-bold mb-4 uppercase tracking-widest">¿No tienes un código?</p>
+                    <a href="https://wa.me/593987838705?text=Hola%20Aureus%20Academy%20%F0%9F%91%8B.%20Quiero%20adquirir%20mi%20c%C3%B3digo%20de%20acceso%20para%20los%20simuladores%20Premium."
+                        target="_blank"
+                        class="text-[#aabe5c] font-black text-sm hover:underline flex items-center justify-center gap-2">
+                        <i data-lucide="shopping-cart" class="w-4 h-4"></i> Comprar Membresía Aquí
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../lms-platform/js/supabase-client.js"></script>
+
+    <script>
+        let isPremium = false;
+        let session = JSON.parse(localStorage.getItem('aureus_sesion') || 'null');
+
+        // Verificación de Sesión para la barra de navegación y membresía
+        async function checkSession() {
+            const { data: { session: supabaseSession } } = await window.supabaseClient.auth.getSession();
+
+            if (supabaseSession) {
+                // Actualizar sesión local con datos de la DB
+                const { data: profile } = await window.supabaseClient
+                    .from('perfiles')
+                    .select('*')
+                    .eq('id', supabaseSession.user.id)
+                    .single();
+
+                if (profile) {
+                    session = { ...session, ...profile };
+                    localStorage.setItem('aureus_sesion', JSON.stringify(session));
+                    isPremium = profile.es_premium;
+
+                    const loginBtn = document.getElementById('nav-login-btn');
+                    const dashboardLink = document.getElementById('nav-dashboard-link');
+                    if (loginBtn) loginBtn.classList.add('hidden');
+                    if (dashboardLink) dashboardLink.classList.remove('hidden');
+                }
+            } else {
+                const loginBtn = document.getElementById('nav-login-btn');
+                const dashboardLink = document.getElementById('nav-dashboard-link');
+                if (loginBtn) loginBtn.classList.remove('hidden');
+                if (dashboardLink) dashboardLink.classList.add('hidden');
+            }
+            renderSimulators(); // Volver a renderizar con el estado premium real
+        }
+
+        // Número de contacto para compras (Puedes cambiarlo por tu número corporativo real)
+        const WHATSAPP_NUMBER = '593987838705';
+
+        // Las 33 Universidades Públicas (Replicadas de uni.html para tener acceso directo)
+        const universities = [
+            { id: '1', name: 'UCE', fullName: 'Universidad Central del Ecuador', logo: '../Univer/UCE-logo.png' },
+            { id: '2', name: 'EPN', fullName: 'Escuela Politécnica Nacional', logo: '../Univer/Epn-logo.png' },
+            { id: '3', name: 'UCUENCA', fullName: 'Universidad de Cuenca', logo: '../Univer/UCuenca.webp' },
+            { id: '4', name: 'ESPOL', fullName: 'Escuela Sup. Politécnica del Litoral', logo: '../Univer/Espol-logo.png' },
+            { id: '5', name: 'UG', fullName: 'Universidad de Guayaquil', logo: '../Univer/Ug-logo.png' },
+            { id: '6', name: 'ESPOCH', fullName: 'Escuela Sup. Politécnica de Chimborazo', logo: '../Univer/ESPOCH-logo.png' },
+            { id: '7', name: 'ESPE', fullName: 'Universidad de las Fuerzas Armadas', logo: '../Univer/Espe-logo.png' },
+            { id: '8', name: 'UNEMI', fullName: 'Universidad Estatal de Milagro', logo: '../Univer/Unemi-logo.png' },
+            { id: '9', name: 'YACHAY', fullName: 'Yachay Tech', logo: '../Univer/Yachay-logo.png' },
+            { id: '10', name: 'UARTES', fullName: 'Universidad de las Artes', logo: '../Univer/Ua-logo.png' },
+            { id: '11', name: 'UEA', fullName: 'Universidad Estatal Amazónica', logo: '../Univer/Uea-logo.png' },
+            { id: '12', name: 'UEB', fullName: 'Universidad Estatal de Bolívar', logo: '../Univer/Ueb-logo.png' },
+            { id: '13', name: 'UPSE', fullName: 'Univ. Estatal Península de Sta. Elena', logo: '../Univer/Upse-ogo.png' },
+            { id: '14', name: 'UAW', fullName: 'Universidad Amawtay Wasi', logo: '../Univer/uaw-logo.png' },
+            { id: '15', name: 'ULEAM', fullName: 'Univ. Laica Eloy Alfaro de Manabí', logo: '../Univer/ULEAM-logo.png' },
+            { id: '16', name: 'UNACH', fullName: 'Universidad Nacional de Chimborazo', logo: '../Univer/Unach-logo.png' },
+            { id: '17', name: 'UNAE', fullName: 'Universidad Nacional de Educación', logo: '../Univer/Unae-logo.png' },
+            { id: '18', name: 'UNL', fullName: 'Universidad Nacional de Loja', logo: '../Univer/Unl-logo.png' },
+            { id: '19', name: 'UTA', fullName: 'Universidad Técnica de Ambato', logo: '../Univer/UTA-logo.png' },
+            { id: '20', name: 'UTMACH', fullName: 'Universidad Técnica de Machala', logo: '../Univer/Utmach-logo.png' },
+            { id: '21', name: 'UTN', fullName: 'Universidad Técnica del Norte', logo: '../Univer/Utn-logo.png' },
+            { id: '22', name: 'IKIAM', fullName: 'Univ. Regional Amazónica Ikiam', logo: '../Univer/Ikiam-logo.png' },
+            { id: '23', name: 'UTM', fullName: 'Universidad Técnica de Manabí', logo: '../Univer/UTM-logo.png' },
+            { id: '24', name: 'UNESUM', fullName: 'Univ. Estatal del Sur de Manabí', logo: '../Univer/Uneum-logo.png' },
+            { id: '25', name: 'ESPAM', fullName: 'Escuela Sup. Pol. Agrop. de Manabí', logo: '../Univer/ESPAM MFL-logo.png' },
+            { id: '26', name: 'UAE', fullName: 'Universidad Agraria del Ecuador', logo: '../Univer/Uae-logo.png' },
+            { id: '27', name: 'UTB', fullName: 'Universidad Técnica de Babahoyo', logo: '../Univer/Utb-logo.png' },
+            { id: '28', name: 'UTEQ', fullName: 'Univ. Técnica Estatal de Quevedo', logo: '../Univer/Uteq-logo.png' },
+            { id: '29', name: 'UTC', fullName: 'Universidad Técnica de Cotopaxi', logo: '../Univer/Utc-logo.png' },
+            { id: '30', name: 'UPEC', fullName: 'Politécnica Estatal del Carchi', logo: '../Univer/Upec-logo.png' },
+            { id: '31', name: 'UTELVT', fullName: 'Universidad Técnica Luis Vargas Torres', logo: '../Univer/UTELVT-logo.png' },
+
+            { id: '33', name: 'IAEN', fullName: 'Instituto de Altos Estudios Nacionales', logo: '../Univer/IAEN-logo.png' },
+            { id: '34', name: 'UASB', fullName: 'Universidad Andina Simón Bolívar', logo: '../Univer/Uasb-logo.png' }
+        ];
+
+        // Función para renderizar el HTML del grid
+        function renderSimulators(filterText = '') {
+            const grid = document.getElementById('simulators-grid');
+            grid.innerHTML = '';
+
+            const filtered = universities.filter(u =>
+                u.name.toLowerCase().includes(filterText.toLowerCase()) ||
+                u.fullName.toLowerCase().includes(filterText.toLowerCase())
+            );
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '<div class="col-span-full py-12 text-center text-slate-400 font-bold text-lg"><i data-lucide="search-x" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>No se encontraron universidades.</div>';
+                if (window.lucide) lucide.createIcons();
+                return;
+            }
+
+            filtered.forEach(uni => {
+                const card = document.createElement('div');
+                card.className = 'sim-card group';
+
+                const isTrial = (uni.name === 'UCE');
+                const badgeHTML = isTrial
+                    ? `<div class="premium-badge" style="background: linear-gradient(135deg, #aabe5c 0%, #568c75 100%); color: white;"><i data-lucide="unlock" class="w-3.5 h-3.5 text-white"></i> Prueba Gratis</div>`
+                    : `<div class="premium-badge"><i data-lucide="crown" class="w-3.5 h-3.5 fill-white"></i> Premium</div>`;
+
+                card.innerHTML = `
+                    ${badgeHTML}
+                    <div class="sim-logo-container">
+                        <!-- Redirige al logo generico en caso de que la URL temporal falle -->
+                        <img src="${uni.logo}" alt="Logo ${uni.name}" onerror="this.src='../img/logo.png'">
+                    </div>
+                    <h3 class="sim-title">Simulador ${uni.name}</h3>
+                    <p class="sim-desc">${uni.fullName}</p>
+                    
+                    <button onclick="accessSimulator('${uni.name}')" class="w-full relative overflow-hidden bg-slate-50 border-2 border-slate-200 text-[#225e47] font-bold py-3 rounded-xl group-hover:bg-[#568c75] group-hover:border-[#568c75] group-hover:text-white transition-all duration-300 flex items-center justify-center gap-2 group/btn shadow-sm">
+                        <span class="relative z-10 flex items-center gap-2">
+                           <i data-lucide="play-circle" class="w-5 h-5"></i>
+                           Iniciar Examen
+                        </span>
+                        <div class="absolute inset-0 h-full w-0 bg-[#225e47] transition-[width] duration-300 ease-out group-hover/btn:w-full z-0"></div>
+                    </button>
+                `;
+                grid.appendChild(card);
+            });
+
+            if (window.lucide) {
+                lucide.createIcons();
+            }
+        }
+
+        // Check Access & WhatsApp Redirect Logic
+        let pendingUni = '';
+
+        function accessSimulator(uniName) {
+            // 1. Si es UCE (Prueba Gratis) o el usuario ya es Premium en su perfil
+            if (uniName === 'UCE' || isPremium) {
+                window.location.href = 'exam.html?uni=' + encodeURIComponent(uniName);
+                return;
+            }
+
+            // 2. Verificar si ya activó esta universidad o tiene Full Pass
+            const unlockedStr = localStorage.getItem('aureus_unlocked_unis') || '[]';
+            const unlockedUnis = JSON.parse(unlockedStr);
+
+            if (unlockedUnis.includes('TODAS') || unlockedUnis.includes(uniName)) {
+                window.location.href = 'exam.html?uni=' + encodeURIComponent(uniName);
+                return;
+            }
+
+            // 3. Si no, abrir el modal de cupones
+            pendingUni = uniName;
+            document.getElementById('coupon-modal').classList.remove('hidden');
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function closeCouponModal() {
+            document.getElementById('coupon-modal').classList.add('hidden');
+        }
+
+        async function validateCoupon() {
+            const name = document.getElementById('student-name').value.trim();
+            const code = document.getElementById('access-code').value.trim().toUpperCase();
+            const btn = document.getElementById('activate-btn');
+
+            if (!name || !code) {
+                alert("Por favor, ingresa tu nombre y el código de acceso.");
+                return;
+            }
+
+            try {
+                btn.disabled = true;
+                btn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> Verificando...';
+                if (window.lucide) lucide.createIcons();
+
+                // Consultar Supabase
+                const { data, error } = await window.supabaseClient
+                    .from('cupones_simulador')
+                    .select('*')
+                    .eq('codigo', code)
+                    .single();
+
+                if (error || !data) {
+                    throw new Error("El código ingresado no es válido o no existe.");
+                }
+
+                if (data.usado) {
+                    throw new Error(`Este código ya fue usado por: ${data.usado_por}.`);
+                }
+
+                // VALIDACIÓN DE UNIVERSIDAD
+                if (data.uni_asignada !== 'TODAS' && data.uni_asignada !== pendingUni) {
+                    throw new Error(`Este código es válido solo para el simulador de: ${data.uni_asignada}. No sirve para ${pendingUni}.`);
+                }
+
+                // Activar el cupón
+                const { error: updateError } = await window.supabaseClient
+                    .from('cupones_simulador')
+                    .update({
+                        usado: true,
+                        usado_por: name
+                    })
+                    .eq('id', data.id);
+
+                if (updateError) throw updateError;
+
+                // Éxito: Guardar en la lista de desbloqueados
+                const unlockedStr = localStorage.getItem('aureus_unlocked_unis') || '[]';
+                const unlockedUnis = JSON.parse(unlockedStr);
+
+                if (!unlockedUnis.includes(data.uni_asignada)) {
+                    unlockedUnis.push(data.uni_asignada);
+                }
+
+                localStorage.setItem('aureus_unlocked_unis', JSON.stringify(unlockedUnis));
+                localStorage.setItem('aureus_student_name', name);
+
+                alert(`¡Activación exitosa! Acceso desbloqueado para ${data.uni_asignada === 'TODAS' ? 'TODOS los simuladores' : pendingUni}.`);
+                window.location.href = 'exam.html?uni=' + encodeURIComponent(pendingUni);
+
+            } catch (err) {
+                alert(err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Activar Ahora';
+                if (window.lucide) lucide.createIcons();
+            }
+        }
+
+        // Búsqueda en vivo
+        document.getElementById('search-sim').addEventListener('input', (e) => {
+            renderSimulators(e.target.value);
+        });
+
+        // Inicio
+        document.addEventListener('DOMContentLoaded', () => {
+            checkSession();
+            lucide.createIcons();
+        });
+    </script>
+    <!-- Footer Estándar -->
+    <footer class="bg-[var(--green-dark)] text-white py-20 px-6 border-t border-white/5">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+                <div>
+                    <div class="flex items-center gap-3 mb-6">
+                        <img src="../img/logo.png" alt="Aureus" class="w-10 h-10 rounded-lg">
+                        <h4 class="font-bold text-lg">Aureus Academy</h4>
+                    </div>
+                    <p class="text-white/50 text-sm leading-relaxed">Formación académica de excelencia para tu ingreso universitario. El preuniversitario #1 del Ecuador.</p>
+                </div>
+                <div>
+                    <h5 class="font-black text-[#aabe5c] text-xs uppercase tracking-widest mb-6">Plataforma</h5>
+                    <ul class="space-y-4">
+                        <li><a href="simuladores.html" class="text-white/70 hover:text-white transition-colors">Simuladores</a></li>
+                        <li><a href="uni.html" class="text-white/70 hover:text-white transition-colors">Universidades</a></li>
+                        <li><a href="login.html" class="text-white/70 hover:text-white transition-colors">Aula Virtual</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-black text-[#aabe5c] text-xs uppercase tracking-widest mb-6">Redes Sociales</h5>
+                    <ul class="space-y-4">
+                        <li><a href="https://www.instagram.com/aureus.academypre/" target="_blank" class="text-white/70 hover:text-white transition-colors flex items-center gap-2 text-sm font-medium">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4s1.791-4 4-4 4 1.791 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                            Instagram</a></li>
+                        <li><a href="#" class="text-white/70 hover:text-white transition-colors flex items-center gap-2 text-sm font-medium">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.17-2.81-.6-4.03-1.37-.88-.55-1.65-1.25-2.23-2.1-.01 3.51.01 7.02-.02 10.53-.06 1.61-.45 3.27-1.43 4.54-1.21 1.58-3.3 2.56-5.28 2.45-1.76-.1-3.5-.96-4.57-2.39-1.21-1.62-1.41-3.87-.53-5.69.7-1.44 2.1-2.54 3.7-2.8 1.1-.18 2.22-.05 3.25.4v4.3c-.63-.37-1.36-.5-2.09-.41-1.07.13-1.99.96-2.18 2.02-.21 1.25.5 2.53 1.71 2.87 1.2.33 2.6-.33 3.03-1.5.17-.46.22-.96.22-1.45V.02z"/></svg>
+                            TikTok</a></li>
+                        <li><a href="https://wa.me/593987838705" target="_blank" class="text-white/70 hover:text-white transition-colors flex items-center gap-2 text-sm font-medium">
+                            <i data-lucide="message-circle" class="w-4 h-4"></i> WhatsApp</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-black text-[#aabe5c] text-xs uppercase tracking-widest mb-6">Soporte Técnico</h5>
+                    <a href="https://wa.me/593985813254" target="_blank" class="bg-white/10 p-4 rounded-xl flex items-center gap-3 hover:bg-white/20 transition-all border border-white/10">
+                        <i data-lucide="help-circle" class="text-[#25d366]"></i>
+                        <div>
+                            <p class="font-bold text-sm">Chat de Soporte</p>
+                            <p class="text-[10px] text-white/50">Asistencia técnica 24/7</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="pt-8 border-t border-white/5 text-center text-white/30 text-xs font-bold uppercase tracking-widest">
+                © 2026 Aureus Academy • Excelencia Académica Superior
+            </div>
+        </div>
+    </footer>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>
