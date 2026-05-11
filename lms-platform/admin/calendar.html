@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendario Institucional - Aureus Academy</title>
+
+    <!-- External Resources -->
+    <link rel="stylesheet" href="../css/global/main.css">
+    <link rel="stylesheet" href="../css/global/layout.css">
+    <link rel="stylesheet" href="../css/components/buttons.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        .calendar-header {
+            background: var(--green-dark);
+            color: white;
+            padding: 3rem;
+            border-radius: var(--radius-xl);
+            margin-bottom: 3rem;
+        }
+
+        .cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1.5rem;
+        }
+
+        .cal-day-header {
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            color: var(--green-medium);
+            text-align: center;
+            padding-bottom: 1rem;
+        }
+
+        .cal-day {
+            background: white;
+            border-radius: var(--radius-lg);
+            min-height: 160px;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .cal-day:hover {
+            border-color: var(--green-medium);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .cal-day.today {
+            border-color: var(--green-light);
+            background: var(--bg-warm-white);
+        }
+
+        .cal-date {
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: var(--green-dark);
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .cal-event {
+            font-size: 0.7rem;
+            padding: 0.4rem 0.6rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .event-task {
+            background: var(--green-light);
+            color: var(--green-dark);
+        }
+
+        .event-class {
+            background: var(--green-medium);
+            color: white;
+        }
+
+        .indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+
+<body class="bg-[#f8f7f2] p-12">
+    <div class="max-w-7xl mx-auto">
+        <header class="flex justify-between items-center mb-12">
+            <button class="btn btn-outline" onclick="window.history.back()">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i> Volver al Dashboard
+            </button>
+            <div class="text-right">
+                <h2 class="text-sm font-black uppercase tracking-widest text-[#568c75]">Control de Tareas y Clases</h2>
+                <h1 class="text-3xl font-black text-[#225e47]">Calendario Académico 2026</h1>
+            </div>
+        </header>
+
+        <section class="calendar-header flex justify-between items-center">
+            <div>
+                <h2 class="text-4xl font-extrabold mb-1">Febrero 2026</h2>
+                <p class="text-white/70 font-medium">Gestión administrativa de cronogramas institucionales.</p>
+            </div>
+            <div class="flex gap-4">
+                <button class="p-4 bg-white/10 rounded-2xl hover:bg-white/20 transition-all text-white"><i
+                        data-lucide="chevron-left"></i></button>
+                <button class="p-4 bg-white/10 rounded-2xl hover:bg-white/20 transition-all text-white"><i
+                        data-lucide="chevron-right"></i></button>
+            </div>
+        </section>
+
+        <div class="cal-grid">
+            <!-- Headers -->
+            <div class="cal-day-header">Lunes</div>
+            <div class="cal-day-header">Martes</div>
+            <div class="cal-day-header">Miércoles</div>
+            <div class="cal-day-header">Jueves</div>
+            <div class="cal-day-header">Viernes</div>
+            <div class="cal-day-header">Sábado</div>
+            <div class="cal-day-header">Domingo</div>
+
+            <!-- Pre-days -->
+            <div class="cal-day opacity-0"></div>
+            <div class="cal-day opacity-0"></div>
+
+            <!-- Days -->
+            <div class="cal-day">
+                <span class="cal-date">1</span>
+                <div class="cal-event event-task">Feria de Carreras</div>
+            </div>
+            <div class="cal-day">
+                <span class="cal-date">2</span>
+                <div class="cal-event event-class">Mate. Avanzada</div>
+            </div>
+            <div class="cal-day today">
+                <span class="cal-date">3</span>
+                <div class="cal-event event-task">Entrega Proyectos</div>
+                <div class="cal-event event-class">Física Lab</div>
+            </div>
+            <div class="cal-day">
+                <span class="cal-date">4</span>
+            </div>
+            <div class="cal-day">
+                <span class="cal-date">5</span>
+                <div class="cal-event event-task">Simulacro UCE</div>
+            </div>
+            <div class="cal-day">
+                <span class="cal-date">6</span>
+            </div>
+            <div class="cal-day">
+                <span class="cal-date">7</span>
+            </div>
+        </div>
+
+        <footer class="mt-16 flex gap-12 p-8 bg-white rounded-3xl border border-white shadow-soft">
+            <div class="flex items-center gap-2">
+                <span class="indicator bg-[#aabe5c]"></span>
+                <span class="text-xs font-bold uppercase tracking-widest text-slate-500">Indicadores de Tareas (Verde
+                    Claro)</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="indicator bg-[#568c75]"></span>
+                <span class="text-xs font-bold uppercase tracking-widest text-slate-500">Horarios de Clases (Verde
+                    Medio)</span>
+            </div>
+            <div class="flex items-center gap-2 ml-auto">
+                <button class="btn btn-primary !py-3 !px-6 text-xs"><i data-lucide="plus" class="w-4 h-4"></i> Agendar
+                    Actividad</button>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

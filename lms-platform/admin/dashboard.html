@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Aureus Academy</title>
+
+    <!-- External Resources -->
+    <link rel="stylesheet" href="../css/global/main.css">
+    <link rel="stylesheet" href="../css/components/buttons.css">
+    <link rel="stylesheet" href="../css/components/cards.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        .sidebar {
+            width: 280px;
+            background: var(--green-dark);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            color: white;
+            padding: 2.5rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .side-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        .side-link.active,
+        .side-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--green-light);
+        }
+
+        .admin-main {
+            margin-left: 280px;
+            padding: 3rem;
+            min-height: 100vh;
+        }
+
+        .status-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .badge-active {
+            background: var(--green-light);
+            color: var(--green-dark);
+        }
+
+        .badge-pending {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+
+        /* Course List Table */
+        .admin-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 1rem;
+        }
+
+        .admin-table th {
+            text-align: left;
+            padding: 1rem;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--green-medium);
+        }
+
+        .admin-table tr {
+            background: white;
+            box-shadow: var(--shadow-soft);
+            transition: transform 0.2s ease;
+        }
+
+        .admin-table td {
+            padding: 1.5rem 1rem;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .admin-table td:first-child {
+            border-left: 1px solid var(--border-color);
+            border-top-left-radius: var(--radius-md);
+            border-bottom-left-radius: var(--radius-md);
+        }
+
+        .admin-table td:last-child {
+            border-right: 1px solid var(--border-color);
+            border-top-right-radius: var(--radius-md);
+            border-bottom-right-radius: var(--radius-md);
+        }
+    </style>
+</head>
+
+<body class="bg-[#f8f7f2]">
+    <aside class="sidebar">
+        <div class="flex items-center gap-3 mb-10">
+            <div class="w-10 h-10 bg-[#aabe5c] rounded-lg"></div>
+            <div>
+                <h1 class="font-extrabold text-lg leading-none">AUREUS</h1>
+                <p class="text-[10px] text-[#aabe5c] font-bold tracking-widest mt-1">ADMIN CONTROL</p>
+            </div>
+        </div>
+
+        <nav class="flex flex-col gap-2">
+            <a href="#" class="side-link active"><i data-lucide="layout-dashboard" class="w-5 h-5"></i> Dashboard</a>
+            <a href="#" class="side-link"><i data-lucide="book-open" class="w-5 h-5"></i> Gestión de Cursos</a>
+            <a href="#" class="side-link"><i data-lucide="calendar" class="w-5 h-5"></i> Calendario Académico</a>
+            <a href="#" class="side-link"><i data-lucide="users" class="w-5 h-5"></i> Estudiantes</a>
+            <a href="#" class="side-link"><i data-lucide="settings" class="w-5 h-5"></i> Configuración</a>
+        </nav>
+
+        <div class="mt-auto p-6 bg-white/5 rounded-2xl border border-white/10">
+            <p class="text-xs font-bold text-white/50 mb-2">SESIÓN INICIADA COMO</p>
+            <p class="font-bold text-sm">Admin Aureus</p>
+            <button class="mt-4 text-[#aabe5c] text-xs font-black uppercase hover:underline">Cerrar Sesión</button>
+        </div>
+    </aside>
+
+    <main class="admin-main">
+        <header class="flex justify-between items-end mb-12">
+            <div>
+                <h1 class="text-4xl font-extrabold mb-2">Panel Administrativo</h1>
+                <p class="text-slate-500 font-medium">Control total de la oferta académica y procesos.</p>
+            </div>
+            <button class="btn btn-primary" onclick="showAddCourseModal()">
+                <i data-lucide="plus" class="w-5 h-5"></i> Nuevo Curso
+            </button>
+        </header>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-16">
+            <div class="bg-white p-6 rounded-2xl shadow-soft border border-white">
+                <p class="text-[10px] uppercase font-black text-slate-400 mb-2">Cursos Activos</p>
+                <p class="text-3xl font-black text-[#225e47]">24</p>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-soft border border-white">
+                <p class="text-[10px] uppercase font-black text-slate-400 mb-2">Nuevos Inscritos</p>
+                <p class="text-3xl font-black text-[#568c75]">128</p>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-soft border border-white">
+                <p class="text-[10px] uppercase font-black text-slate-400 mb-2">Tareas Pendientes</p>
+                <p class="text-3xl font-black text-[#aabe5c]">15</p>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-soft border border-white">
+                <p class="text-[10px] uppercase font-black text-slate-400 mb-2">Retención</p>
+                <p class="text-3xl font-black text-[#225e47]">98%</p>
+            </div>
+        </div>
+
+        <!-- Course Management Section -->
+        <section>
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-extrabold">Gestión de Oferta Académica</h2>
+                <div class="relative">
+                    <input type="text" placeholder="Buscar curso..."
+                        class="bg-white border-2 border-slate-100 rounded-xl px-10 py-3 text-sm focus:border-[#225e47] transition-all outline-none">
+                    <i data-lucide="search" class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                </div>
+            </div>
+
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Curso / Materia</th>
+                        <th>Universidad</th>
+                        <th>Estado</th>
+                        <th>Estudiantes</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="courseTableBody">
+                    <tr>
+                        <td>
+                            <p class="font-bold text-[#225e47]">Matemáticas Superiores</p>
+                            <p class="text-xs text-slate-400">Cálculo diferencial e integral</p>
+                        </td>
+                        <td>UCE / EPN</td>
+                        <td><span class="status-badge badge-active">Activo</span></td>
+                        <td>45</td>
+                        <td>
+                            <div class="flex gap-2">
+                                <button class="p-2 hover:bg-[#568c75]/10 rounded-lg text-[#568c75]"><i
+                                        data-lucide="edit-3" class="w-4 h-4"></i></button>
+                                <button class="p-2 hover:bg-red-50 rounded-lg text-red-500" onclick="deleteRow(this)"><i
+                                        data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p class="font-bold text-[#225e47]">Física Mecánica</p>
+                            <p class="text-xs text-slate-400">Dinámica de la partícula</p>
+                        </td>
+                        <td>EPN</td>
+                        <td><span class="status-badge badge-active">Activo</span></td>
+                        <td>32</td>
+                        <td>
+                            <div class="flex gap-2">
+                                <button class="p-2 hover:bg-[#568c75]/10 rounded-lg text-[#568c75]"><i
+                                        data-lucide="edit-3" class="w-4 h-4"></i></button>
+                                <button class="p-2 hover:bg-red-50 rounded-lg text-red-500" onclick="deleteRow(this)"><i
+                                        data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        function deleteRow(btn) {
+            if (confirm('¿Estás seguro de eliminar este curso? Esta acción no se puede deshacer.')) {
+                btn.closest('tr').remove();
+            }
+        }
+
+        function showAddCourseModal() {
+            alert('Funcionalidad de Modal para Agregar Curso: Se abriría un formulario para ingresar Nombre, Universidad y Descripción.');
+        }
+    </script>
+</body>
+
+</html>
